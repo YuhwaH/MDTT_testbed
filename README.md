@@ -5,5 +5,3 @@ A configurable browser-based implementation of the **Multi-Directional Tapping T
 > *Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed.*
 
 **▶ Run it: https://** — no installation, no account, nothing leaves your machine.
-
-Repository: https://github.com/xml1324/MDTT_Testbed
