@@ -1,9 +1,8 @@
 # MDTT_testbed
 
-A configurable browser-based implementation of the **Multi-Directional Tapping Task (MDTT)** described in ISO/TS 9241-411 Annex B.6.2.2, built as the companion tool for:
+A configurable browser-based implementation of the **Multi-Directional Tapping Task (MDTT)** described in ISO/TS 9241-411 Annex B.6.2.2. This prototype is the configurable testbed for MDTT proposed through a systematic literature review of 157 MDTT studies, built as the companion tool for:
 
 > *Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed.*
-
 
 ## What it is for
 
@@ -81,3 +80,26 @@ All exports are generated in the browser. Every file carries the same 7-characte
 These are complementary, not interchangeable, which is what recommendation R6 asks you to preserve in the write-up: movement time without an accuracy measure does not describe the speed–accuracy trade-off, and throughput alone hides the separate contributions of speed and errors — particularly when the regression intercept is non-zero.
 
 Pilot values produced here come from a single session and are meant to verify that a configuration runs, not to stand in for a study. For a real experiment, aggregate within participant and condition before comparing.
+
+## Privacy
+
+The tool runs entirely client-side. There is no server, no analytics, and no network request of any kind: configurations and trial data stay in the browser tab until you download them. This is usually the relevant fact for an ethics application.
+
+## Repository layout
+
+```
+index.html    the complete testbed (single self-contained file)
+README.md     this file
+LICENSE       licence for the code
+docs/         screenshots and example exports
+```
+
+Reporting the `config_id` and depositing the exported JSON alongside your data makes the task reconstructable by anyone reading the paper.
+
+## Contributing
+
+Issues and pull requests are welcome, particularly: XR-native implementations of the same specification, additional Fitts' law formulations, and reports of configurations where the geometry checks give a misleading result. Please include the exported configuration JSON when reporting a problem.
+
+## Licence
+
+Code is released under the MIT License; documentation and figures under CC BY 4.0.
