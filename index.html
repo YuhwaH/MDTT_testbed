@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MDTT Testbed — configurable multi-directional tapping task</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#e7ecf0;
+  --panel:#ffffff;
+  --panel-2:#f4f7f9;
+  --ink:#12202b;
+  --graphite:#5b6b78;
+  --rule:#ccd6de;
+  --rule-soft:#e2e9ee;
+  --accent:#1b6b8c;
+  --accent-dk:#124f68;
+  --signal:#d98216;
+  --measure:#2f7d5d;
+  --error:#bf3b30;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,sans-serif;
+  --cond:'IBM Plex Sans Condensed','IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:var(--sans);color:var(--ink);background:var(--paper);
+  font-size:14px;line-height:1.5;
+  background-image:linear-gradient(var(--rule-soft) 1px,transparent 1px),linear-gradient(90deg,var(--rule-soft) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+h1,h2,h3,h4{font-family:var(--cond);margin:0;letter-spacing:.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* ---------- shell ---------- */
+.masthead{
+  border-bottom:1px solid var(--rule);background:var(--panel);
+  padding:14px 22px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+}
+.masthead h1{font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.masthead .sub{font-family:var(--mono);font-size:11.5px;color:var(--graphite)}
+.masthead .spacer{flex:1}
+.masthead .cite{font-size:11.5px;color:var(--graphite);max-width:46ch}
+
+.shell{display:grid;grid-template-columns:376px minmax(0,1fr);gap:0;align-items:start}
+.rail{
+  border-right:1px solid var(--rule);background:var(--panel);
+  height:calc(100vh - 54px);overflow-y:auto;position:sticky;top:0;
+}
+.main{padding:20px 24px 60px;min-width:0}
+
+/* ---------- rail groups ---------- */
+.group{border-bottom:1px solid var(--rule-soft)}
+.group>summary{
+  list-style:none;cursor:pointer;padding:11px 16px;display:flex;gap:10px;align-items:baseline;
+  font-family:var(--cond);font-weight:600;font-size:13.5px;text-transform:uppercase;letter-spacing:.05em;
+  background:var(--panel-2);
+}
+.group>summary::-webkit-details-marker{display:none}
+.group>summary:hover{background:#eaf1f5}
+.group .rid{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--panel);background:var(--accent);
+  padding:1px 5px;border-radius:2px;letter-spacing:0;
+}
+.group .rid.opt{background:var(--graphite)}
+.group-body{padding:12px 16px 16px}
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+label.lbl{display:block;font-size:11.5px;font-weight:600;color:var(--graphite);margin-bottom:3px;letter-spacing:.02em}
+.hint{font-size:11px;color:var(--graphite);margin-top:4px;line-height:1.4}
+input[type=text],input[type=number],select,textarea{
+  width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:3px;background:#fff;
+  font-family:var(--mono);font-size:12.5px;
+}
+textarea{font-family:var(--sans);font-size:12.5px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;gap:8px}
+.row>*{flex:1;min-width:0}
+.check{display:flex;gap:8px;align-items:flex-start;margin-bottom:7px;font-size:12.5px}
+.check input{margin-top:2px}
+.seg{display:flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.seg button{
+  flex:1;background:#fff;border:0;padding:6px 4px;font-size:12px;cursor:pointer;color:var(--graphite);
+  border-right:1px solid var(--rule-soft);font-family:var(--cond);font-weight:600;letter-spacing:.02em;
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--rule);margin-bottom:18px}
+.tabs button{
+  background:transparent;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;
+  font-family:var(--cond);font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--graphite);
+}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--signal)}
+.pane{display:none}
+.pane.on{display:block}
+
+/* ---------- cards ---------- */
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px;margin-bottom:16px}
+.card>h3{
+  font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--graphite);
+  margin-bottom:12px;display:flex;gap:8px;align-items:baseline;
+}
+.card>h3 .num{font-family:var(--mono);color:var(--signal)}
+.grid2{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:1180px){.grid2{grid-template-columns:1fr}.shell{grid-template-columns:1fr}.rail{height:auto;position:static;border-right:0;border-bottom:1px solid var(--rule)}}
+
+/* ---------- readouts ---------- */
+.readout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft)}
+@media(max-width:640px){.readout{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.readout div{background:var(--panel);padding:8px 10px}
+.readout .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--graphite)}
+.readout .v{font-family:var(--mono);font-size:16px;font-weight:500;margin-top:2px}
+.readout .v small{font-size:11px;color:var(--graphite);font-weight:400}
+
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid var(--rule-soft);padding:5px 7px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-family:var(--cond);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--graphite);border-bottom:1px solid var(--rule)}
+td.num,td .num{font-family:var(--mono)}
+tbody tr:hover{background:var(--panel-2)}
+#checkTable th:nth-child(2),#checkTable td:nth-child(2){text-align:left}
+#checkTable td:nth-child(3){color:var(--graphite)}
+.tablewrap{overflow-x:auto}
+
+.flag{
+  border-left:3px solid var(--signal);background:#fdf6ec;padding:8px 11px;font-size:12.5px;margin-top:10px;border-radius:0 3px 3px 0;
+}
+.flag.err{border-left-color:var(--error);background:#fbeceb}
+.flag.ok{border-left-color:var(--measure);background:#eef6f2}
+.flag b{font-weight:600}
+
+.btn{
+  background:var(--accent);color:#fff;border:0;border-radius:3px;padding:9px 16px;cursor:pointer;
+  font-family:var(--cond);font-weight:600;font-size:13.5px;text-transform:uppercase;letter-spacing:.05em;
+}
+.btn:hover{background:var(--accent-dk)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--rule)}
+.btn.ghost:hover{background:var(--panel-2)}
+.btn.warn{background:var(--signal)}
+.btn:disabled{background:var(--rule);color:#8b98a2;cursor:not-allowed}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+
+pre.out{
+  background:#0f1d27;color:#dbe6ec;border-radius:4px;padding:14px;overflow:auto;max-height:340px;
+  font-family:var(--mono);font-size:11.5px;line-height:1.55;white-space:pre-wrap;
+}
+.methods{background:var(--panel-2);border:1px solid var(--rule-soft);border-radius:3px;padding:13px 15px;font-size:13px;line-height:1.65}
+
+/* ---------- task overlay ---------- */
+#stage{position:fixed;inset:0;background:#fff;z-index:60;display:none}
+#stage.on{display:block}
+#stageHud{
+  position:absolute;top:0;left:0;right:0;padding:7px 14px;display:flex;gap:16px;align-items:center;
+  font-family:var(--mono);font-size:11.5px;color:var(--graphite);background:rgba(255,255,255,.92);
+  border-bottom:1px solid var(--rule-soft);pointer-events:none;
+}
+#stageHud .esc{margin-left:auto;pointer-events:auto}
+#stageSvg{position:absolute;inset:0;width:100%;height:100%;cursor:default;touch-action:none}
+#stageMsg{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;max-width:460px;
+  background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 26px;
+}
+#stageMsg:empty{display:none}
+#stageMsg h2{font-size:17px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+#stageMsg p{font-size:13px;color:var(--graphite);margin:0 0 14px}
+.hidden{display:none!important}
+@media(prefers-reduced-motion:no-preference){
+  .flash{transition:fill .12s linear,stroke .12s linear}
+}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- report sheet ---------- */
+.sheet{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:28px 32px}
+.sheet-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;
+  border-bottom:2px solid var(--ink);padding-bottom:10px}
+.sheet-head h2{font-size:18px;text-transform:uppercase;letter-spacing:.07em}
+.sheet-head .stamp{font-family:var(--mono);font-size:11px;color:var(--graphite);text-align:right}
+.sheet section{margin-top:18px}
+.sheet section>h4{
+  font-family:var(--cond);font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);
+  border-bottom:1px solid var(--rule-soft);padding-bottom:4px;margin-bottom:9px;
+}
+.sheet section>h4 .r{color:var(--graphite);font-weight:500}
+dl.kv{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr);gap:5px 16px;margin:0;font-size:12.6px}
+dl.kv dt{color:var(--graphite)}
+dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word}
+.sheet .todo{margin:0;padding-left:18px;font-size:12.8px}
+.sheet .todo li{margin-bottom:3px}
+.sheet .prose p{font-size:12.8px;line-height:1.6;margin:0 0 8px}
+.stampline{font-family:var(--mono);font-size:11px;color:var(--measure)}
+@media print{
+  body *{visibility:hidden}
+  #reportWrap,#reportWrap *{visibility:visible}
+  #reportWrap{position:absolute;left:0;top:0;width:100%}
+  .sheet{border:0;padding:0}
+  .sheet section{break-inside:auto}
+  .sheet section>h4{break-after:avoid}
+  @page{margin:15mm}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <h1>MDTT Testbed</h1>
+  <span class="sub">configurable multi-directional tapping task · v1.0</span>
+  <span class="spacer"></span>
+  <span class="cite">Companion tool for “Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed”. Configuration panels map to recommendations R1–R5; R6 (performance measures and Fitts' law analysis) is covered by the Results and Report tabs.</span>
+</header>
+
+<div class="shell">
+
+<!-- ============ CONFIG RAIL ============ -->
+<aside class="rail" aria-label="Task configuration">
+
+  <details class="group" open>
+    <summary><span class="rid">R1</span> Apparatus &amp; mapping</summary>
+    <div class="group-body">
+      <div class="row field">
+        <div><label class="lbl" for="inKind">Input</label>
+          <select id="inKind">
+            <option>Mouse</option><option>Touch / stylus</option><option>Trackpad</option><option>Trackball</option>
+            <option>Joystick</option><option>Controller (XR)</option><option>Hand / finger tracking</option>
+            <option>Head pointing</option><option>Gaze</option><option>Body / motion tracking</option><option>Other</option>
+          </select></div>
+        <div><label class="lbl" for="outKind">Output</label>
+          <select id="outKind">
+            <option>Monitor</option><option>Tablet / smartphone</option><option>Projector / CAVE</option>
+            <option>HMD (VR)</option><option>See-through AR</option><option>Other</option>
+          </select></div>
+      </div>
+      <div class="field"><label class="lbl" for="inModel">Device model / version</label>
+        <input type="text" id="inModel" placeholder="e.g. Logitech G502, 1000 Hz, 800 CPI"></div>
+      <div class="field"><label class="lbl" for="mapping">Control-to-display mapping</label>
+        <textarea id="mapping" rows="2" placeholder="e.g. system pointer, acceleration off, gain 1.0 — or: ray from controller origin, hit = ray/target intersection"></textarea></div>
+      <div class="field"><label class="lbl" for="trigger">Selection trigger &amp; hit definition</label>
+        <input type="text" id="trigger" placeholder="e.g. left button press; hit = cursor hotspot inside target"></div>
+      <p class="hint">This tool runs a pointer-based task in the browser. For XR, use these fields to document the chain you implement on your own platform — the exported spec stays valid.</p>
+    </div>
+  </details>
+
+  <details class="group" open>
+    <summary><span class="rid">R2</span> Difficulty, size &amp; units</summary>
+    <div class="group-body">
+      <div class="field"><label class="lbl">Reporting unit</label>
+        <div class="seg" id="unitSeg" role="group">
+          <button data-u="px" aria-pressed="true">px</button>
+          <button data-u="mm" aria-pressed="false">mm</button>
+          <button data-u="cm" aria-pressed="false">cm</button>
+          <button data-u="m" aria-pressed="false">m</button>
+          <button data-u="deg" aria-pressed="false">deg</button>
+        </div></div>
+      <div class="field"><label class="lbl" for="amps">Amplitudes A (comma separated)</label>
+        <input type="text" id="amps" value="200, 400"></div>
+      <div class="field"><label class="lbl" for="wids">Target widths W (comma separated)</label>
+        <input type="text" id="wids" value="20, 40, 80"></div>
+      <div class="field"><label class="lbl">Display calibration <span style="font-weight:400">(px ↔ mm ↔ deg)</span></label>
+        <div class="row">
+          <div><input type="number" id="scrPx" value="1920" min="320" step="1" aria-label="Screen width in CSS pixels"><div class="hint">screen width, px</div></div>
+          <div><input type="number" id="scrMm" value="530" min="20" step="1" aria-label="Screen width in millimetres"><div class="hint">screen width, mm</div></div>
+          <div><input type="number" id="viewMm" value="600" min="50" step="10" aria-label="Viewing distance in millimetres"><div class="hint">viewing dist., mm</div></div>
+        </div></div>
+      <p class="hint">All conditions are exported in px, mm and degrees of visual angle at once, so a pixel-only specification never leaves the tool.</p>
+    </div>
+  </details>
+
+  <details class="group" open>
+    <summary><span class="rid">R3</span> Target geometry</summary>
+    <div class="group-body">
+      <div class="field"><label class="lbl">Task space</label>
+        <div class="seg" id="dimSeg" role="group">
+          <button data-d="2d" aria-pressed="true">2D plane</button>
+          <button data-d="3d" aria-pressed="false">3D spheres</button>
+        </div></div>
+      <div class="field" id="shapeField"><label class="lbl">Target shape</label>
+        <div class="seg" id="shapeSeg" role="group">
+          <button data-s="circle" aria-pressed="true">Circle</button>
+          <button data-s="square" aria-pressed="false">Square</button>
+        </div></div>
+      <div class="field hidden" id="depthField">
+        <label class="lbl" for="depthMm">Target-plane depth from the eye (mm)</label>
+        <input type="number" id="depthMm" value="1000" min="100" step="50">
+        <div class="hint">Spheres sit on a fronto-parallel circle at this depth. Depth drives every visual-angle figure: the same physical W subtends a different angle when you move the plane.</div>
+      </div>
+      <div id="shapeFlag"></div>
+    </div>
+  </details>
+
+  <details class="group" open>
+    <summary><span class="rid">R4</span> Count, sequence &amp; trials</summary>
+    <div class="group-body">
+      <div class="row field">
+        <div><label class="lbl" for="nTargets">Visible targets N</label>
+          <input type="number" id="nTargets" value="13" min="4" max="41" step="1"></div>
+        <div><label class="lbl" for="reps">Repetitions / condition</label>
+          <input type="number" id="reps" value="2" min="1" max="20" step="1"></div>
+      </div>
+      <div class="field"><label class="lbl" for="stepMode">Sequence step s (targets advanced per movement)</label>
+        <div class="row">
+          <select id="stepMode">
+            <option value="auto">Auto — nearest to N/2 with gcd(s,N)=1</option>
+            <option value="manual">Manual</option>
+          </select>
+          <input type="number" id="stepVal" value="6" min="1" step="1" style="max-width:78px" disabled>
+        </div>
+        <div id="stepFlag"></div>
+      </div>
+      <div class="check"><input type="checkbox" id="compensate">
+        <label for="compensate">Scale the circle so the <b>realized</b> chord equals the nominal A (otherwise A is the circle diameter)</label></div>
+      <div class="row field">
+        <div><label class="lbl" for="practice">Practice selections dropped / sequence</label>
+          <input type="number" id="practice" value="1" min="0" max="6" step="1"></div>
+        <div><label class="lbl" for="order">Condition order</label>
+          <select id="order"><option value="random">Randomised</option><option value="ascending">Ascending ID</option><option value="fixed">As listed</option></select></div>
+      </div>
+      <div class="field"><label class="lbl" for="errMode">After an unsuccessful selection</label>
+        <select id="errMode">
+          <option value="advance">Advance to the next target (error logged)</option>
+          <option value="repeat">Repeat the same target until acquired</option>
+        </select></div>
+    </div>
+  </details>
+
+  <details class="group" open>
+    <summary><span class="rid">R5</span> Feedback</summary>
+    <div class="group-body">
+      <div class="field"><label class="lbl" for="activeCue">Active-target cue <span style="font-weight:400">(required by ISO)</span></label>
+        <select id="activeCue"><option value="fill">Filled highlight</option><option value="outline">Outline only</option><option value="both">Fill + outline</option></select></div>
+      <div class="check"><input type="checkbox" id="fbHover"><label for="fbHover">Hover / contact highlight on the active target</label></div>
+      <div class="check"><input type="checkbox" id="fbSucV" checked><label for="fbSucV">Visual success feedback</label></div>
+      <div class="check"><input type="checkbox" id="fbSucA"><label for="fbSucA">Audio success feedback</label></div>
+      <div class="check"><input type="checkbox" id="fbFailV" checked><label for="fbFailV">Visual failure feedback</label></div>
+      <div class="check"><input type="checkbox" id="fbFailA" checked><label for="fbFailA">Audio failure feedback</label></div>
+      <p class="hint">Hover and error highlighting measurably shift throughput and error rate — hold them constant unless feedback is your independent variable.</p>
+    </div>
+  </details>
+
+  <details class="group">
+    <summary><span class="rid opt">OPT</span> Directional sampling</summary>
+    <div class="group-body">
+      <div class="check"><input type="checkbox" id="advMirror">
+        <label for="advMirror">Mirror clockwise and counter-clockwise sequences <b>(×2 trials)</b></label></div>
+      <div class="field"><label class="lbl" for="phaseMode">Angular phase of the layout</label>
+        <select id="phaseMode">
+          <option value="fixed">Fixed offset</option>
+          <option value="counter">Counterbalanced offsets</option>
+          <option value="random">Randomised per sequence</option>
+        </select></div>
+      <div class="row field">
+        <div><label class="lbl" for="phaseDeg">Offset, deg</label><input type="number" id="phaseDeg" value="0" step="1"></div>
+        <div><label class="lbl" for="phaseK">Offsets</label><input type="number" id="phaseK" value="2" min="2" max="6" step="1" disabled></div>
+      </div>
+      <p class="hint">Off by default. Enable only when directional generalisability is central to the question — the trial budget above updates immediately.</p>
+    </div>
+  </details>
+
+  <details class="group">
+    <summary><span class="rid opt">DOC</span> Study metadata</summary>
+    <div class="group-body">
+      <div class="field"><label class="lbl" for="mTitle">Study title</label><input type="text" id="mTitle" placeholder="Pilot 1 — ray vs. direct touch"></div>
+      <div class="field"><label class="lbl" for="mWho">Participant / session ID</label><input type="text" id="mWho" placeholder="P01_S1"></div>
+      <div class="field"><label class="lbl" for="mGoal">Evaluation goal &amp; intended departures from the reference procedure</label>
+        <textarea id="mGoal" rows="3" placeholder="e.g. benchmark comparability with ISO 9241-411 studies; no departures"></textarea></div>
+    </div>
+  </details>
+
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main class="main">
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-pane="p-geo">Geometry</button>
+    <button role="tab" aria-selected="false" data-pane="p-run">Run</button>
+    <button role="tab" aria-selected="false" data-pane="p-res">Results</button>
+    <button role="tab" aria-selected="false" data-pane="p-rep">Report</button>
+    <button role="tab" aria-selected="false" data-pane="p-exp">Export</button>
+  </div>
+
+  <!-- GEOMETRY -->
+  <section class="pane on" id="p-geo">
+    <div class="grid2">
+      <div>
+        <div class="card">
+          <h3><span class="num">01</span> Layout &amp; realized transitions</h3>
+          <div id="previewWrap"></div>
+          <div id="view3dBar" class="hidden" style="gap:10px;align-items:center;margin-top:9px">
+            <button class="btn ghost" id="frontViewBtn" style="padding:5px 12px;font-size:11.5px">Front view</button>
+            <span class="hint" id="orbitReadout" style="margin:0"></span>
+          </div>
+          <div class="hint" id="previewHint" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <h3><span class="num">02</span> Directional coverage</h3>
+          <div id="roseWrap"></div>
+          <div id="roseNote" class="hint" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3><span class="num">03</span> Task summary</h3>
+          <div class="readout" id="readout"></div>
+          <div id="geoFlags"></div>
+        </div>
+        <div class="card">
+          <h3><span class="num">04</span> Conditions</h3>
+          <div class="tablewrap"><table id="condTable"></table></div>
+          <div class="hint" style="margin-top:8px">ID uses the Shannon formulation, ID = log₂(A/W + 1), computed from the <b>realized</b> amplitude.</div>
+        </div>
+        <div class="card">
+          <h3><span class="num">05</span> Trial budget</h3>
+          <div class="tablewrap"><table id="budgetTable"></table></div>
+          <div id="budgetFlag"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RUN -->
+  <section class="pane" id="p-run">
+    <div class="card">
+      <h3><span class="num">06</span> Pilot run</h3>
+      <p style="margin-top:0;font-size:13px">The task opens full-window. Click the highlighted target to start each sequence, then keep selecting the highlighted target. Press <b>Esc</b> to abort — data collected so far is kept.</p>
+      <div id="fitFlag"></div>
+      <div class="btnrow" style="margin-top:12px">
+        <button class="btn" id="startBtn">Start run</button>
+        <button class="btn ghost" id="clearBtn">Clear collected data</button>
+      </div>
+      <div class="readout" id="runState" style="margin-top:14px"></div>
+    </div>
+    <div class="card">
+      <h3><span class="num">07</span> What gets recorded</h3>
+      <p style="margin:0;font-size:13px">One row per target-to-target movement: condition, sequence and movement index, direction and phase, the from-point (previous selection point), target centre, first-click endpoint, movement time, hit/miss, attempts, and the practice flag. Effective measures are computed from the <b>first click</b> of every movement, so misses stay in the endpoint distribution as Fitts’ law methodology requires.</p>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="pane" id="p-res">
+    <div class="card">
+      <h3><span class="num">08</span> Per-condition performance <span style="color:var(--accent)">· R6</span></h3>
+      <div class="tablewrap"><table id="resTable"></table></div>
+      <div id="resFlags"></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3><span class="num">09</span> MT–ID regression</h3>
+        <div id="fitWrap"></div>
+        <div id="fitNote" class="hint" style="margin-top:8px"></div>
+      </div>
+      <div class="card">
+        <h3><span class="num">10</span> Endpoint spread</h3>
+        <div id="epWrap"></div>
+        <div class="hint" style="margin-top:8px">Selection endpoints projected onto each movement axis, pooled per condition. Wₑ = 4.133·SD<sub>x</sub>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="pane" id="p-rep">
+    <div class="card">
+      <h3><span class="num">R</span> Reportable configuration</h3>
+      <p style="margin-top:0;font-size:13px">Freeze the configuration you intend to run, then take this sheet into the Methods section. It gathers every value a reader needs, flags what is still missing, and gives the configuration an ID that also travels with the exported JSON and CSV files.</p>
+      <div class="btnrow">
+        <button class="btn" id="confirmBtn">Confirm this configuration</button>
+        <button class="btn ghost" id="printBtn">Print / save as PDF</button>
+        <button class="btn ghost" id="copyMd">Copy as Markdown</button>
+        <button class="btn ghost" id="dlMd">Download .md</button>
+      </div>
+      <div id="confirmFlag"></div>
+    </div>
+    <div id="reportWrap"></div>
+  </section>
+
+  <!-- EXPORT -->
+  <section class="pane" id="p-exp">
+    <div class="card">
+      <h3><span class="num">11</span> Files</h3>
+      <div class="btnrow">
+        <button class="btn" id="dlSpec">Download config (JSON)</button>
+        <button class="btn ghost" id="dlTrials">Download trials (CSV)</button>
+        <button class="btn ghost" id="dlSummary">Download summary (CSV)</button>
+        <button class="btn ghost" id="loadSpecBtn">Load config…</button>
+        <input type="file" id="loadSpec" accept="application/json" class="hidden">
+      </div>
+      <p class="hint" style="margin-top:10px">The JSON spec carries every parameter plus the realized geometry (step, chord length, movement directions), so a reader can reconstruct the task without the paper.</p>
+    </div>
+    <div class="card">
+      <h3><span class="num">12</span> Methods paragraph</h3>
+      <div class="methods" id="methodsText"></div>
+      <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="copyMethods">Copy text</button></div>
+    </div>
+    <div class="card">
+      <h3><span class="num">13</span> Reporting checklist coverage</h3>
+      <div class="tablewrap"><table id="checkTable"></table></div>
+      <div class="hint" style="margin-top:8px">Items the tool cannot know — participants, posture, apparatus photographs, analysis code — stay with you.</div>
+    </div>
+    <div class="card">
+      <h3><span class="num">14</span> Config preview</h3>
+      <pre class="out" id="specPreview"></pre>
+    </div>
+  </section>
+</main>
+</div>
+
+<!-- ============ TASK STAGE ============ -->
+<div id="stage" role="application" aria-label="Multi-directional tapping task">
+  <div id="stageHud">
+    <span id="hudSeq">—</span><span id="hudCond">—</span><span id="hudMove">—</span><span id="hudErr">—</span>
+    <button class="btn ghost esc" id="abortBtn" style="padding:3px 10px;font-size:11px">Esc — stop</button>
+  </div>
+  <svg id="stageSvg"></svg>
+  <div id="stageMsg"></div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(v,d=2)=>(v===null||v===undefined||!isFinite(v))?"—":Number(v).toFixed(d);
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const TAU=Math.PI*2;
+
+/* ---------------- configuration state ---------------- */
+const C={
+  meta:{title:"",who:"",goal:""},
+  apparatus:{input:"Mouse",inputModel:"",output:"Monitor",mapping:"",trigger:""},
+  display:{scrPx:1920,scrMm:530,viewMm:600},
+  unit:"px",
+  amps:[200,400], wids:[20,40,80],
+  shape:"circle", dim:"2d", depthMm:1000,
+  n:13, stepMode:"auto", step:6, compensate:false,
+  reps:2, practice:1, order:"random", errMode:"advance",
+  fb:{activeCue:"fill",hover:false,sucV:true,sucA:false,failV:true,failA:true},
+  adv:{mirror:false,phaseMode:"fixed",phaseDeg:0,phaseK:2}
+};
+
+/* ---------------- units ---------------- */
+const pxPerMm=()=>C.display.scrPx/C.display.scrMm;
+let UNITSWITCHED=false;
+const is3D=()=>C.dim==="3d";
+const refDistMm=()=>is3D()?C.depthMm:C.display.viewMm;
+function toPx(v){
+  if(C.unit==="px")return v;
+  if(C.unit==="mm")return v*pxPerMm();
+  if(C.unit==="cm")return v*10*pxPerMm();
+  if(C.unit==="m")return v*1000*pxPerMm();
+  if(C.unit==="deg")return 2*refDistMm()*Math.tan(v*Math.PI/360)*pxPerMm();
+  return v;
+}
+const px2mm=p=>p/pxPerMm();
+const px2deg=p=>2*Math.atan(px2mm(p)/2/refDistMm())*180/Math.PI;
+function fromPx(p){
+  if(C.unit==="px")return p;
+  if(C.unit==="mm")return px2mm(p);
+  if(C.unit==="cm")return px2mm(p)/10;
+  if(C.unit==="m")return px2mm(p)/1000;
+  if(C.unit==="deg")return px2deg(p);
+  return p;
+}
+const shapeName=()=>is3D()?"sphere":C.shape;
+const U=()=>C.unit;
+
+/* ---------------- geometry ---------------- */
+function autoStep(n){
+  let best=1,bd=Infinity;
+  for(let s=1;s<n;s++){ if(gcd(s,n)!==1) continue; const d=Math.abs(s-n/2); if(d<bd-1e-9){bd=d;best=s;} }
+  return best;
+}
+function stepOf(){ return C.stepMode==="auto"?autoStep(C.n):clamp(Math.round(C.step),1,C.n-1); }
+function chordFactor(){ return Math.sin(Math.PI*stepOf()/C.n); }   // chord = D * sin(pi s / n)
+function radiusPx(Apx){ return C.compensate ? Apx/(2*chordFactor()) : Apx/2; }
+function realizedPx(Apx){ return 2*radiusPx(Apx)*chordFactor(); }
+function targetAngles(phaseDeg){
+  const a=[]; for(let i=0;i<C.n;i++) a.push(-90+phaseDeg+i*360/C.n); return a;
+}
+function orderOf(dir){
+  const s=dir==="ccw"?C.n-stepOf():stepOf(), o=[0];
+  for(let i=1;i<=C.n;i++) o.push((o[i-1]+s)%C.n);
+  return o;
+}
+function positions(cx,cy,R,phaseDeg){
+  return targetAngles(phaseDeg).map(d=>{const r=d*Math.PI/180;return{x:cx+R*Math.cos(r),y:cy+R*Math.sin(r)};});
+}
+function movementDirections(phaseDeg,dirs){
+  const out=[];
+  for(const d of dirs){
+    const o=orderOf(d), p=positions(0,0,100,phaseDeg);
+    for(let i=0;i<C.n;i++){
+      const a=p[o[i]],b=p[o[i+1]];
+      out.push(((Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI)+360)%360);
+    }
+  }
+  return out;
+}
+function conditions(){
+  const list=[];
+  for(const A of C.amps) for(const W of C.wids){
+    const Apx=toPx(A), Wpx=toPx(W), Rpx=realizedPx(Apx);
+    const Wdeg=px2deg(Wpx), Adeg=px2deg(Rpx);
+    list.push({id:`A${A}_W${W}`,A,W,Apx,Wpx,realPx:Rpx,Wdeg,Adeg,
+      IDang:Math.log2(Adeg/Wdeg+1),
+      ID:Math.log2(Rpx/Wpx+1), IDnom:Math.log2(Apx/Wpx+1)});
+  }
+  return list;
+}
+function phaseList(){
+  const a=C.adv;
+  if(a.phaseMode==="random")return[null];
+  if(a.phaseMode==="counter"){const k=clamp(a.phaseK,2,6),out=[];for(let i=0;i<k;i++)out.push(a.phaseDeg+i*360/(C.n*k));return out;}
+  return[a.phaseDeg];
+}
+function dirList(){ return C.adv.mirror?["cw","ccw"]:["cw"]; }
+function budget(){
+  const conds=conditions().length, seqs=conds*dirList().length*phaseList().length*C.reps;
+  const perSeq=C.n, analysed=Math.max(0,C.n-C.practice);
+  return{conds,seqs,perSeq,moves:seqs*perSeq,analysed:seqs*analysed,
+    perCond:C.reps*dirList().length*phaseList().length*analysed};
+}
+
+/* ---------------- SVG helpers ---------------- */
+function svg(tag,attrs){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+function shapeNode(shape,x,y,w,attrs){
+  return shape==="square"?svg("rect",{x:x-w/2,y:y-w/2,width:w,height:w,...attrs})
+                         :svg("circle",{cx:x,cy:y,r:w/2,...attrs});
+}
+function sphereDefs(pfx){
+  const defs=svg("defs");
+  const grad=(id,c1,c2)=>{
+    const rg=svg("radialGradient",{id:pfx+id,cx:"34%",cy:"28%",r:"78%"});
+    rg.appendChild(svg("stop",{offset:"0%","stop-color":c1}));
+    rg.appendChild(svg("stop",{offset:"100%","stop-color":c2}));
+    return rg;
+  };
+  defs.appendChild(grad("sphIdle","#f4f8fa","#a5b5c0"));
+  defs.appendChild(grad("sphAct","#f8cf8d","#bd6c07"));
+  defs.appendChild(grad("sphHover","#ffe2b0","#d98216"));
+  return defs;
+}
+
+/* ---------------- 3D view ---------------- */
+const V3={yaw:24,pitch:-15,drag:null};
+function rot3(p,yaw,pitch){
+  const cy=Math.cos(yaw),sy=Math.sin(yaw);
+  const x1=p.x*cy+p.z*sy, z1=-p.x*sy+p.z*cy;
+  const cp=Math.cos(pitch),sp=Math.sin(pitch);
+  return{x:x1,y:p.y*cp-z1*sp,z:p.y*sp+z1*cp};
+}
+const depthPx=()=>C.depthMm*pxPerMm();
+function proj3(p,dPx){ const z=dPx+p.z, s=dPx/Math.max(dPx*0.2,z); return{x:p.x*s,y:p.y*s,z,s}; }
+function render3D(){
+  const S=460,cx=S/2,cy=S/2;
+  const conds=conditions(), ref=conds[conds.length-1]||{Apx:200,Wpx:40};
+  const R=radiusPx(ref.Apx), dPx=depthPx(), W=ref.Wpx;
+  const yaw=V3.yaw*Math.PI/180, pit=V3.pitch*Math.PI/180;
+  const angs=targetAngles(phaseList()[0]??0);
+  const P=angs.map((a,i)=>{
+    const r=a*Math.PI/180;
+    return{...proj3(rot3({x:R*Math.cos(r),y:R*Math.sin(r),z:0},yaw,pit),dPx),i};
+  });
+  const ring=[];
+  for(let k=0;k<=120;k++){
+    const r=k/120*TAU;
+    ring.push(proj3(rot3({x:R*Math.cos(r),y:R*Math.sin(r),z:0},yaw,pit),dPx));
+  }
+  const ext=Math.max(1,...P.map(q=>Math.hypot(q.x,q.y)+W/2*q.s),...ring.map(q=>Math.hypot(q.x,q.y)));
+  const F=(S/2-26)/ext;
+  const X=q=>cx+q.x*F, Y=q=>cy+q.y*F, rad=q=>Math.max(1.6,W/2*q.s*F);
+  const g=svg("svg",{viewBox:`0 0 ${S} ${S}`,width:"100%",
+    style:"max-width:460px;display:block;margin:auto;cursor:grab;touch-action:none"});
+  g.appendChild(sphereDefs("pv"));
+  g.appendChild(svg("polyline",{points:ring.map(q=>`${X(q)},${Y(q)}`).join(" "),
+    fill:"none",stroke:"#ccd6de","stroke-dasharray":"4 5"}));
+  const o=orderOf("cw");
+  for(let i=0;i<C.n;i++){
+    const a=P[o[i]],b=P[o[i+1]];
+    g.appendChild(svg("line",{x1:X(a),y1:Y(a),x2:X(b),y2:Y(b),
+      stroke:i===0?"#d98216":"#b9c6cf","stroke-width":i===0?2:1,opacity:i===0?.95:.45}));
+  }
+  [...P].sort((a,b)=>b.z-a.z).forEach(q=>{
+    const act=q.i===o[0];
+    g.appendChild(svg("circle",{cx:X(q),cy:Y(q),r:rad(q),
+      fill:act?"url(#pvsphAct)":"url(#pvsphIdle)",stroke:act?"#a35f0a":"#93a5b1","stroke-width":.8}));
+  });
+  const A2=realizedPx(ref.Apx);
+  const lab=svg("text",{x:cx,y:S-7,"text-anchor":"middle","font-size":10.5,
+    "font-family":"IBM Plex Mono, monospace",fill:"#2f7d5d"});
+  lab.textContent=`A′ ${fmt(fromPx(A2),1)} ${U()} = ${fmt(px2deg(A2),2)}° · W ${fmt(px2deg(ref.Wpx),2)}° at ${fmt(C.depthMm,0)} mm`;
+  g.appendChild(lab);
+  const wrap=$("#previewWrap"); wrap.innerHTML=""; wrap.appendChild(g);
+}
+function normDeg(d){ let x=d%360; if(x>180)x-=360; if(x<-180)x+=360; return x; }
+function updateOrbit(){
+  if(!is3D())return;
+  $("#orbitReadout").innerHTML=`yaw ${fmt(normDeg(V3.yaw),0)}° · pitch ${fmt(V3.pitch,0)}° — inspection only. Every reported figure uses the frontal view.`;
+}
+
+/* ---------------- preview ---------------- */
+function renderPreview(){
+  if(is3D()){ render3D(); updateOrbit(); return; }
+  const S=460,cx=S/2,cy=S/2, conds=conditions();
+  const ref=conds[conds.length-1]||{Apx:200,Wpx:40};
+  const Rpx=radiusPx(ref.Apx), scale=(S/2-34)/(Rpx+ref.Wpx/2);
+  const R=Rpx*scale, W=Math.max(4,ref.Wpx*scale);
+  const ph=phaseList()[0]??0, pts=positions(cx,cy,R,ph||0), o=orderOf("cw");
+  const g=svg("svg",{viewBox:`0 0 ${S} ${S}`,width:"100%",style:"max-width:460px;display:block;margin:auto"});
+
+  g.appendChild(svg("circle",{cx,cy,r:R,fill:"none",stroke:"#ccd6de","stroke-dasharray":"4 5"}));
+  for(let i=0;i<C.n;i++){
+    const a=pts[o[i]],b=pts[o[i+1]];
+    g.appendChild(svg("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:i===0?"#d98216":"#b9c6cf","stroke-width":i===0?2:1,opacity:i===0?1:.65}));
+  }
+  pts.forEach((p,i)=>{
+    const act=i===o[0];
+    g.appendChild(shapeNode(C.shape,p.x,p.y,W,{fill:act?"#d98216":"#dfe6eb",stroke:act?"#a35f0a":"#b3c1cb","stroke-width":1}));
+    const t=svg("text",{x:p.x,y:p.y+3.4,"text-anchor":"middle","font-size":9.5,"font-family":"IBM Plex Mono, monospace",fill:act?"#fff":"#5b6b78"});
+    t.textContent=o.indexOf(i)===0?"1":String(o.indexOf(i)+1);
+    g.appendChild(t);
+  });
+  // caliper on the first chord
+  const a=pts[o[0]],b=pts[o[1]],mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  const lab=svg("text",{x:mx,y:my-7,"text-anchor":"middle","font-size":10.5,"font-family":"IBM Plex Mono, monospace",fill:"#2f7d5d"});
+  lab.textContent=`A′ = ${fmt(fromPx(realizedPx(ref.Apx)),1)} ${U()}`;
+  g.appendChild(svg("rect",{x:mx-56,y:my-19,width:112,height:15,fill:"#fff",opacity:.85,rx:2}));
+  g.appendChild(lab);
+
+  const wrap=$("#previewWrap"); wrap.innerHTML=""; wrap.appendChild(g);
+}
+
+function renderRose(){
+  const S=250,cx=S/2,cy=S/2,R=92;
+  const g=svg("svg",{viewBox:`0 0 ${S} ${S}`,width:"100%",style:"max-width:250px;display:block;margin:auto"});
+  [1,.66,.33].forEach(f=>g.appendChild(svg("circle",{cx,cy,r:R*f,fill:"none",stroke:"#e2e9ee"})));
+  const base=movementDirections(phaseList()[0]??0,["cw"]);
+  const extra=C.adv.mirror?movementDirections(phaseList()[0]??0,["ccw"]):[];
+  const draw=(arr,col,w)=>arr.forEach(d=>{
+    const r=d*Math.PI/180;
+    g.appendChild(svg("line",{x1:cx,y1:cy,x2:cx+R*Math.cos(r),y2:cy+R*Math.sin(r),stroke:col,"stroke-width":w,"stroke-linecap":"round",opacity:.85}));
+  });
+  draw(base,"#1b6b8c",2.4); draw(extra,"#d98216",2.4);
+  g.appendChild(svg("circle",{cx,cy,r:3,fill:"#12202b"}));
+  const wrap=$("#roseWrap"); wrap.innerHTML=""; wrap.appendChild(g);
+  const key=d=>Math.round(d*10)/10;
+  const uniq=new Set([...base,...extra].map(key));
+  const both=new Set([...base,...movementDirections(phaseList()[0]??0,["ccw"])].map(key));
+  const res=360/uniq.size;
+  let note=`<b>${uniq.size}</b> distinct movement directions, ${fmt(res,1)}° apart`;
+  if(C.adv.mirror) note+=" (amber = counter-clockwise sequence).";
+  else if(both.size>base.length) note+=` — mirroring the sequence would raise that to ${both.size} directions ${fmt(360/both.size,1)}° apart, at double the trial cost.`;
+  else note+=` — mirroring would reverse the movements but add no new directions, because N = ${C.n} is even. Rotating the layout is the option that widens coverage here.`;
+  $("#roseNote").innerHTML=note;
+}
+
+/* ---------------- summary tables ---------------- */
+function renderSummary(){
+  const s=stepOf(),cf=chordFactor(),b=budget(),conds=conditions();
+  const dev=(1-cf)*100;
+  const IDs=conds.map(c=>c.ID);
+  $("#readout").innerHTML=[
+    ["Targets N",C.n],["Step s",s],
+    ["Chord / diameter",fmt(cf,3)],
+    ["Conditions",b.conds],
+    ["ID range",`${fmt(Math.min(...IDs),2)}–${fmt(Math.max(...IDs),2)} <small>bits</small>`],
+    ["Movements / seq.",`${b.perSeq} <small>(${Math.max(0,C.n-C.practice)} analysed)</small>`],
+    ["Sequences",b.seqs],["Analysed movements",b.analysed]
+  ].concat(is3D()?[
+    ["Task space","3D <small>spheres</small>"],
+    ["Depth",`${fmt(C.depthMm,0)} <small>mm</small>`],
+    ["Angular ID range",`${fmt(Math.min(...conds.map(c=>c.IDang)),2)}–${fmt(Math.max(...conds.map(c=>c.IDang)),2)} <small>bits</small>`],
+    ["W range",`${fmt(Math.min(...conds.map(c=>c.Wdeg)),2)}–${fmt(Math.max(...conds.map(c=>c.Wdeg)),2)}<small>°</small>`]
+  ]:[]).map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+
+  const flags=[];
+  if(C.stepMode==="manual"&&gcd(s,C.n)!==1)
+    flags.push(`<div class="flag err"><b>Sequence does not visit every target.</b> gcd(${s},${C.n}) = ${gcd(s,C.n)}, so the sequence closes after ${C.n/gcd(s,C.n)} targets and revisits them. Choose s with gcd(s,N)=1.</div>`);
+  if(!C.compensate&&dev>1)
+    flags.push(`<div class="flag"><b>Realized amplitude is ${fmt(dev,1)}% shorter than nominal A.</b> With N=${C.n} and s=${s} the chord is ${fmt(cf,3)}·A, not A. Report the realized value, or tick the compensation box in R4.</div>`);
+  if(C.compensate)
+    flags.push(`<div class="flag ok"><b>Compensation on.</b> The layout circle is scaled to ${fmt(1/(2*cf),3)}·A in radius so that every movement is exactly A.</div>`);
+  if(C.n%2===0&&C.stepMode==="auto")
+    flags.push(`<div class="flag"><b>Even N.</b> s = N/2 = ${C.n/2} is the only exactly diametric transition, but it revisits just two targets, so the tool uses s = ${s} instead — a chord of ${fmt(cf,3)} × the diameter. With odd N the near-opposite step gives cos(π/2N) × diameter and the question does not arise.</div>`);
+  if(C.practice>=C.n)
+    flags.push(`<div class="flag err"><b>No movements left to analyse.</b> Practice drops ≥ N movements per sequence.</div>`);
+  $("#geoFlags").innerHTML=flags.join("");
+
+  // conditions table
+  const mmCols=C.unit!=="mm";
+  let h=`<thead><tr><th>Condition</th><th>A (${U()})</th><th>A′ (${U()})</th><th>W (${U()})</th><th>ID</th>`+
+        (mmCols?`<th>A′ (mm)</th><th>W (mm)</th>`:``)+
+        `<th>A′ (deg)</th><th>W (deg)</th>`+(is3D()?`<th>ID ang.</th>`:``)+`</tr></thead><tbody>`;
+  conds.slice().sort((a,b2)=>a.ID-b2.ID).forEach(c=>{
+    h+=`<tr><td class="num">${c.id}</td><td class="num">${fmt(c.A,1)}</td><td class="num">${fmt(fromPx(c.realPx),1)}</td>
+        <td class="num">${fmt(c.W,1)}</td><td class="num"><b>${fmt(c.ID,2)}</b></td>`+
+        (mmCols?`<td class="num">${fmt(px2mm(c.realPx),1)}</td><td class="num">${fmt(px2mm(c.Wpx),1)}</td>`:``)+
+        `<td class="num">${fmt(c.Adeg,2)}</td><td class="num">${fmt(c.Wdeg,2)}</td>`+
+        (is3D()?`<td class="num"><b>${fmt(c.IDang,2)}</b></td>`:``)+`</tr>`;
+  });
+  $("#condTable").innerHTML=h+"</tbody>";
+
+  // budget table
+  const rows=[
+    ["Conditions (A × W)",b.conds],
+    ["Directions",dirList().length+(C.adv.mirror?" (cw, ccw)":" (cw)")],
+    ["Phase offsets",phaseList().length+(C.adv.phaseMode==="random"?" (randomised)":"")],
+    ["Repetitions",C.reps],
+    ["Sequences total",b.seqs],
+    ["Movements presented",b.moves],
+    ["Movements analysed",b.analysed],
+    ["Analysed movements per condition",b.perCond]
+  ];
+  $("#budgetTable").innerHTML="<tbody>"+rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td></tr>`).join("")+"</tbody>";
+  $("#budgetFlag").innerHTML = b.perCond<15
+    ? `<div class="flag"><b>${b.perCond} analysed movements per condition.</b> Effective width is a standard deviation estimate; fewer than ~15 endpoints per condition makes Wₑ and throughput unstable.</div>`
+    : `<div class="flag ok"><b>${b.perCond} analysed movements per condition</b> — enough endpoints for a stable Wₑ estimate.</div>`;
+
+  const sflags=[];
+  if(!is3D()&&C.shape==="square")
+    sflags.push(`<div class="flag"><b>Square targets: W depends on approach direction.</b> Under a projected-extent convention the width of a square of side <i>s</i> runs from <i>s</i> for an axis-aligned approach to <i>s</i>√2 at 45°, a spread of 41.4%. Projected extent is only one convention — line-intersection and endpoint-derived widths need not agree — so state explicitly how W is determined, or use circles for general comparison.</div>`);
+  if(is3D()){
+    if(UNITSWITCHED)
+      sflags.push(`<div class="flag"><b>Units switched from px to mm.</b> Your amplitude and width numbers were kept, but they now mean physical millimetres in the scene, not screen pixels. Retype them if you meant a different physical size.</div>`);
+    const dmax=Math.max(...conds.map(c=>Math.abs(c.IDang-c.ID)));
+    sflags.push(`<div class="flag ok"><b>Spheres keep W direction-invariant in 3D</b>, the volumetric counterpart of the circle — the default for general comparison.</div>`);
+    const wmm=conds.map(c=>px2mm(c.Wpx)), ang=d=>wmm.map(v=>2*Math.atan(v/2/d)*180/Math.PI);
+    const now=ang(C.depthMm), half=ang(C.depthMm/2);
+    sflags.push(`<div class="flag"><b>Depth is not recoverable from ID.</b> ID is a ratio, so the angular and metric versions agree to within ${fmt(dmax,2)} bits — but absolute angular size is not: W spans ${fmt(Math.min(...now),2)}–${fmt(Math.max(...now),2)}° at ${fmt(C.depthMm,0)} mm and would span ${fmt(Math.min(...half),2)}–${fmt(Math.max(...half),2)}° at half that depth, with a different reach as well. Report depth <i>and</i> visual angle: performance can shift with depth even when visual angle is held constant.</div>`);
+  }
+  $("#shapeFlag").innerHTML=sflags.join("");
+  $("#previewHint").innerHTML = is3D()
+    ? `Drag inside the view to orbit the layout and inspect the spheres off-axis; <b>Front view</b> returns to the frontal (0°, 0°) viewpoint that all reported values assume. Sphere size shrinks with distance under perspective — the caliper line reports the frontal amplitude in both physical and angular terms.`
+    : `Grey chords: every movement in one sequence. Amber: the first movement from the start target. The dashed circle is the layout circle; the caliper marks the realized chord.`;
+  $("#stepFlag").innerHTML = C.stepMode==="auto"
+    ? `<div class="hint">Auto-selected s = ${s} for N = ${C.n}; chord = ${fmt(cf,3)} × diameter.</div>` : "";
+
+  renderFit(); renderChecklist(); renderMethods(); renderSpecPreview(); renderRunState(); renderFitFlag(); renderReport();
+}
+
+/* ---------------- binding ---------------- */
+function parseList(str){
+  return str.split(/[,\s]+/).map(Number).filter(v=>isFinite(v)&&v>0);
+}
+function bind(){
+  const num=(id,fn)=>$(id).addEventListener("input",e=>{fn(Number(e.target.value));renderAll();});
+  const txt=(id,fn)=>$(id).addEventListener("input",e=>{fn(e.target.value);renderAll();});
+  const chk=(id,fn)=>$(id).addEventListener("change",e=>{fn(e.target.checked);renderAll();});
+  const sel=(id,fn)=>$(id).addEventListener("change",e=>{fn(e.target.value);renderAll();});
+
+  txt("#inModel",v=>C.apparatus.inputModel=v); txt("#mapping",v=>C.apparatus.mapping=v);
+  txt("#trigger",v=>C.apparatus.trigger=v);
+  sel("#inKind",v=>C.apparatus.input=v); sel("#outKind",v=>C.apparatus.output=v);
+  txt("#mTitle",v=>C.meta.title=v); txt("#mWho",v=>C.meta.who=v); txt("#mGoal",v=>C.meta.goal=v);
+
+  $("#amps").addEventListener("input",e=>{const l=parseList(e.target.value);if(l.length)C.amps=l;renderAll();});
+  $("#wids").addEventListener("input",e=>{const l=parseList(e.target.value);if(l.length)C.wids=l;renderAll();});
+  num("#scrPx",v=>C.display.scrPx=v||1920); num("#scrMm",v=>C.display.scrMm=v||530);
+  num("#viewMm",v=>C.display.viewMm=v||600);
+
+  $$("#unitSeg button").forEach(b=>b.addEventListener("click",()=>{
+    if(b.disabled)return;
+    UNITSWITCHED=false; C.unit=b.dataset.u; $$("#unitSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderAll();
+  }));
+  $$("#dimSeg button").forEach(b=>b.addEventListener("click",()=>{
+    C.dim=b.dataset.d;
+    $$("#dimSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    if(is3D()&&C.unit==="px"){ C.unit="mm"; UNITSWITCHED=true; }   // pixels do not define a size in a 3D task
+    if(!is3D()) UNITSWITCHED=false;
+    syncDimUI(); renderAll();
+  }));
+  num("#depthMm",v=>C.depthMm=clamp(v||1000,100,20000));
+  $$("#shapeSeg button").forEach(b=>b.addEventListener("click",()=>{
+    C.shape=b.dataset.s; $$("#shapeSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderAll();
+  }));
+
+  num("#nTargets",v=>{C.n=clamp(Math.round(v)||13,4,41);$("#stepVal").max=C.n-1;});
+  num("#reps",v=>C.reps=clamp(Math.round(v)||1,1,20));
+  sel("#stepMode",v=>{C.stepMode=v;$("#stepVal").disabled=v==="auto";if(v==="manual")$("#stepVal").value=C.step=autoStep(C.n);});
+  num("#stepVal",v=>C.step=v);
+  chk("#compensate",v=>C.compensate=v);
+  num("#practice",v=>C.practice=clamp(Math.round(v)||0,0,6));
+  sel("#order",v=>C.order=v); sel("#errMode",v=>C.errMode=v);
+
+  sel("#activeCue",v=>C.fb.activeCue=v);
+  chk("#fbHover",v=>C.fb.hover=v); chk("#fbSucV",v=>C.fb.sucV=v); chk("#fbSucA",v=>C.fb.sucA=v);
+  chk("#fbFailV",v=>C.fb.failV=v); chk("#fbFailA",v=>C.fb.failA=v);
+
+  chk("#advMirror",v=>C.adv.mirror=v);
+  sel("#phaseMode",v=>{C.adv.phaseMode=v;$("#phaseK").disabled=v!=="counter";$("#phaseDeg").disabled=v==="random";});
+  num("#phaseDeg",v=>C.adv.phaseDeg=v||0); num("#phaseK",v=>C.adv.phaseK=clamp(Math.round(v)||2,2,6));
+
+  $$(".tabs button").forEach(b=>b.addEventListener("click",()=>{
+    $$(".tabs button").forEach(x=>x.setAttribute("aria-selected",String(x===b)));
+    $$(".pane").forEach(p=>p.classList.toggle("on",p.id===b.dataset.pane));
+  }));
+}
+function renderAll(){ renderPreview(); renderRose(); renderSummary(); }
+
+/* =====================================================================
+   TASK RUNNER
+   ===================================================================== */
+let TR=[];                       // trial records
+const RUN={active:false,plan:[],si:0,o:[],pts:[],mi:0,t0:0,from:null,attempts:0,seqErr:0,W:0,cond:null,phase:0,dir:"cw",scale:1};
+let audio=null;
+function beep(freq,dur,type){
+  try{
+    audio=audio||new (window.AudioContext||window.webkitAudioContext)();
+    const o=audio.createOscillator(),g=audio.createGain();
+    o.type=type||"sine";o.frequency.value=freq;o.connect(g);g.connect(audio.destination);
+    g.gain.setValueAtTime(.0001,audio.currentTime);
+    g.gain.exponentialRampToValueAtTime(.18,audio.currentTime+.01);
+    g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+dur);
+    o.start();o.stop(audio.currentTime+dur+.02);
+  }catch(e){}
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function fitCheck(){
+  const conds=conditions();
+  const need=Math.max(...conds.map(c=>2*radiusPx(c.Apx)+c.Wpx));
+  const avail=Math.min(window.innerWidth,window.innerHeight-40)-24;
+  return{need,avail,ok:need<=avail};
+}
+function renderFitFlag(){
+  const f=fitCheck();
+  $("#fitFlag").innerHTML=f.ok
+    ? `<div class="flag ok"><b>Layout fits this window.</b> Largest condition needs ${Math.round(f.need)} px; ${Math.round(f.avail)} px available. Geometry renders 1:1.</div>`
+    : `<div class="flag err"><b>Layout does not fit.</b> Largest condition needs ${Math.round(f.need)} px but only ${Math.round(f.avail)} px are available. Enlarge the window, or reduce A — the run is blocked so that no silently rescaled geometry enters your data.</div>`;
+  $("#startBtn").disabled=!f.ok;
+}
+function buildPlan(){
+  const conds=conditions(),plan=[];
+  for(let r=1;r<=C.reps;r++){
+    let list=[];
+    for(const c of conds) for(const d of dirList()) for(const ph of phaseList())
+      list.push({cond:c,dir:d,phase:ph,rep:r});
+    if(C.order==="random")shuffle(list);
+    else if(C.order==="ascending")list.sort((a,b)=>a.cond.ID-b.cond.ID);
+    plan.push(...list);
+  }
+  return plan;
+}
+function startRun(){
+  if(!fitCheck().ok)return;
+  RUN.plan=buildPlan(); RUN.si=0; RUN.active=true;
+  $("#stage").classList.add("on");
+  document.addEventListener("keydown",escHandler);
+  $("#stageSvg").addEventListener("pointerdown",onClick);
+  $("#stageSvg").addEventListener("pointermove",onMove);
+  loadSequence();
+}
+function escHandler(e){ if(e.key==="Escape") stopRun(); }
+function stopRun(){
+  RUN.active=false;
+  $("#stage").classList.remove("on");
+  document.removeEventListener("keydown",escHandler);
+  $("#stageSvg").removeEventListener("pointerdown",onClick);
+  $("#stageSvg").removeEventListener("pointermove",onMove);
+  $("#stageMsg").innerHTML="";
+  renderResults(); renderRunState();
+}
+function loadSequence(){
+  if(RUN.si>=RUN.plan.length){ finishRun(); return; }
+  const s=RUN.plan[RUN.si];
+  RUN.cond=s.cond; RUN.dir=s.dir; RUN.rep=s.rep;
+  RUN.phase=s.phase===null?Math.random()*360:s.phase;
+  const svgEl=$("#stageSvg"),rect=svgEl.getBoundingClientRect();
+  const cx=rect.width/2,cy=rect.height/2+14;
+  RUN.pts=positions(cx,cy,radiusPx(s.cond.Apx),RUN.phase);
+  RUN.o=orderOf(s.dir); RUN.W=s.cond.Wpx; RUN.mi=0; RUN.attempts=0; RUN.seqErr=0; RUN.from=null;
+  drawStage(); updateHud();
+}
+function drawStage(hoverIdx){
+  const svgEl=$("#stageSvg"); svgEl.innerHTML="";
+  if(is3D()) svgEl.appendChild(sphereDefs("st"));
+  const activeIdx=RUN.o[RUN.mi];
+  RUN.pts.forEach((p,i)=>{
+    const act=i===activeIdx;
+    let fill=is3D()?"url(#stsphIdle)":"#e3e9ed",stroke=is3D()?"#93a5b1":"#c2cdd5",sw=1;
+    if(act){
+      const on=is3D()?"url(#stsphAct)":"#d98216";
+      if(C.fb.activeCue==="fill"){fill=on;stroke="#a35f0a";}
+      else if(C.fb.activeCue==="outline"){stroke="#d98216";sw=3;}
+      else{fill=on;stroke="#12202b";sw=2.5;}
+      if(C.fb.hover&&hoverIdx===i){fill=is3D()?"url(#stsphHover)":"#f0ad4e";}
+    }
+    svgEl.appendChild(shapeNode(shapeName(),p.x,p.y,RUN.W,{fill,stroke,"stroke-width":sw,class:"flash"}));
+  });
+}
+function flash(color,ms){
+  const svgEl=$("#stageSvg");
+  const r=svg("rect",{x:0,y:0,width:"100%",height:"100%",fill:color,opacity:.16});
+  svgEl.appendChild(r); setTimeout(()=>r.remove(),ms||110);
+}
+function hit(p,t){
+  if(is3D()||C.shape==="circle")return Math.hypot(p.x-t.x,p.y-t.y)<=RUN.W/2;
+  return Math.abs(p.x-t.x)<=RUN.W/2&&Math.abs(p.y-t.y)<=RUN.W/2;
+}
+function onMove(e){
+  if(!C.fb.hover)return;
+  const r=$("#stageSvg").getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};
+  const idx=RUN.o[RUN.mi];
+  drawStage(hit(p,RUN.pts[idx])?idx:-1);
+}
+function onClick(e){
+  const r=$("#stageSvg").getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};
+  const idx=RUN.o[RUN.mi],t=RUN.pts[idx],ok=hit(p,t),now=performance.now();
+
+  if(RUN.mi===0){                       // start of the sequence: acquire target 1, not a recorded movement
+    if(!ok){ if(C.fb.failV)flash("#bf3b30"); if(C.fb.failA)beep(200,.12,"square"); return; }
+    if(C.fb.sucV)flash("#2f7d5d",90); if(C.fb.sucA)beep(880,.05);
+    RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.mi=1; RUN.attempts=0; drawStage(); updateHud(); return;
+  }
+
+  RUN.attempts++;
+  if(RUN.attempts===1){                 // record the first click as the endpoint of this movement
+    const c=RUN.cond,a=Math.hypot(t.x-RUN.from.x,t.y-RUN.from.y),
+          b=Math.hypot(p.x-t.x,p.y-t.y),d=Math.hypot(p.x-RUN.from.x,p.y-RUN.from.y),
+          dx=(d*d-a*a-b*b)/(2*a), dy=Math.sqrt(Math.max(0,b*b-dx*dx));
+    TR.push({
+      seq:RUN.si+1,rep:RUN.rep,condition:c.id,A:c.A,W:c.W,unit:C.unit,
+      A_px:+c.Apx.toFixed(2),W_px:+c.Wpx.toFixed(2),Arealized_px:+c.realPx.toFixed(2),ID:+c.ID.toFixed(4),
+      direction:RUN.dir,phase_deg:+RUN.phase.toFixed(2),n_targets:C.n,step:stepOf(),
+      movement:RUN.mi,target_index:idx,
+      practice:RUN.mi<=C.practice?1:0,
+      from_x:+RUN.from.x.toFixed(2),from_y:+RUN.from.y.toFixed(2),
+      target_x:+t.x.toFixed(2),target_y:+t.y.toFixed(2),
+      select_x:+p.x.toFixed(2),select_y:+p.y.toFixed(2),
+      a_px:+a.toFixed(2),dx_px:+dx.toFixed(3),dy_px:+dy.toFixed(3),
+      MT_ms:+(now-RUN.t0).toFixed(1),hit:ok?1:0,attempts:1
+    });
+    if(!ok)RUN.seqErr++;
+  }else{
+    TR[TR.length-1].attempts=RUN.attempts;
+  }
+
+  if(ok){ if(C.fb.sucV)flash("#2f7d5d",90); if(C.fb.sucA)beep(880,.05); }
+  else  { if(C.fb.failV)flash("#bf3b30");   if(C.fb.failA)beep(200,.12,"square"); }
+
+  if(!ok&&C.errMode==="repeat")return;   // stay on the same target
+
+  RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.attempts=0; RUN.mi++;
+  if(RUN.mi>C.n){ RUN.si++; loadSequence(); return; }
+  drawStage(); updateHud();
+}
+function updateHud(){
+  $("#hudSeq").textContent=`sequence ${RUN.si+1}/${RUN.plan.length}`;
+  $("#hudCond").textContent=`${RUN.cond.id} · ID ${fmt(RUN.cond.ID,2)} bits · ${RUN.dir}`;
+  $("#hudMove").textContent=RUN.mi===0?"click the highlighted target to start":`movement ${RUN.mi}/${C.n}`;
+  $("#hudErr").textContent=`errors this sequence: ${RUN.seqErr}`;
+}
+function finishRun(){
+  RUN.active=false;
+  $("#stageSvg").innerHTML="";
+  $("#stageMsg").innerHTML=`<h2>Run complete</h2><p>${TR.length} movements recorded. Results and exports are ready.</p>
+    <button class="btn" id="doneBtn">Back to the testbed</button>`;
+  $("#doneBtn").addEventListener("click",stopRun);
+}
+function renderRunState(){
+  const analysed=TR.filter(t=>!t.practice).length;
+  $("#runState").innerHTML=[
+    ["Movements recorded",TR.length],["Analysed",analysed],
+    ["Practice",TR.length-analysed],
+    ["Error rate",TR.length?fmt(100*(1-TR.reduce((s,t)=>s+t.hit,0)/TR.length),1)+"<small> %</small>":"—"]
+  ].map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+}
+
+/* =====================================================================
+   ANALYSIS
+   ===================================================================== */
+function analyse(){
+  const rows=TR.filter(t=>!t.practice);
+  const by={};
+  rows.forEach(t=>{(by[t.condition]=by[t.condition]||[]).push(t);});
+  return Object.entries(by).map(([id,ts])=>{
+    const n=ts.length, MT=ts.reduce((s,t)=>s+t.MT_ms,0)/n;
+    const err=1-ts.reduce((s,t)=>s+t.hit,0)/n;
+    const dxs=ts.map(t=>t.dx_px), mdx=dxs.reduce((a,b)=>a+b,0)/n;
+    const sd=Math.sqrt(dxs.reduce((s,v)=>s+(v-mdx)**2,0)/Math.max(1,n-1));
+    const We=4.133*sd, Ae=ts.reduce((s,t)=>s+t.a_px+t.dx_px,0)/n;
+    const IDe=Math.log2(Ae/We+1), TP=IDe/(MT/1000);
+    const c=ts[0];
+    return{id,n,MT,err,ID:c.ID,A:c.A,W:c.W,We_px:We,Ae_px:Ae,IDe,TP,sd,mdx};
+  }).sort((a,b)=>a.ID-b.ID);
+}
+function regress(pts){
+  const n=pts.length; if(n<2)return null;
+  const mx=pts.reduce((s,p)=>s+p.x,0)/n,my=pts.reduce((s,p)=>s+p.y,0)/n;
+  let sxy=0,sxx=0,syy=0;
+  pts.forEach(p=>{sxy+=(p.x-mx)*(p.y-my);sxx+=(p.x-mx)**2;syy+=(p.y-my)**2;});
+  if(sxx===0)return null;
+  const b=sxy/sxx,a=my-b*mx,r2=syy?(sxy*sxy)/(sxx*syy):1;
+  return{a,b,r2};
+}
+function renderResults(){
+  const R=analyse();
+  if(!R.length){
+    $("#resTable").innerHTML=`<tbody><tr><td style="color:#5b6b78">No analysable movements yet. Run a pilot on the Run tab.</td></tr></tbody>`;
+    $("#resFlags").innerHTML=""; $("#fitWrap").innerHTML=""; $("#epWrap").innerHTML=""; $("#fitNote").textContent="";
+    return;
+  }
+  let h=`<thead><tr><th>Condition</th><th>n</th><th>ID</th><th>MT (ms)</th><th>Err (%)</th><th>Wₑ (${U()})</th><th>Aₑ (${U()})</th><th>IDₑ</th><th>TP (bps)</th></tr></thead><tbody>`;
+  R.forEach(r=>{
+    h+=`<tr><td class="num">${r.id}</td><td class="num">${r.n}</td><td class="num">${fmt(r.ID,2)}</td>
+        <td class="num">${fmt(r.MT,0)}</td><td class="num">${fmt(100*r.err,1)}</td>
+        <td class="num">${fmt(fromPx(r.We_px),2)}</td><td class="num">${fmt(fromPx(r.Ae_px),1)}</td>
+        <td class="num">${fmt(r.IDe,2)}</td><td class="num"><b>${fmt(r.TP,2)}</b></td></tr>`;
+  });
+  $("#resTable").innerHTML=h+"</tbody>";
+
+  const thin=R.filter(r=>r.n<15);
+  $("#resFlags").innerHTML=thin.length
+    ? `<div class="flag"><b>Thin conditions.</b> ${thin.map(t=>t.id).join(", ")} have fewer than 15 analysed movements — treat Wₑ, IDₑ and TP as provisional.</div>`
+    : `<div class="flag ok">All four measure families are here: movement time, error rate, throughput, and the MT–ID regression, with effective measures underneath. Report them together — throughput is a combined measure, not a replacement for its speed and accuracy components. Aggregate within participant and condition before comparing.</div>`;
+
+  drawFit(R); drawEndpoints(R);
+}
+function renderFit(){ if(TR.length)renderResults(); else renderResults(); }
+
+function drawFit(R){
+  const W=430,H=280,m={l:52,r:14,t:14,b:38};
+  const g=svg("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",style:"display:block"});
+  const pts=R.map(r=>({x:r.ID,y:r.MT}));
+  const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+  const x0=Math.min(...xs,0)*0+Math.max(0,Math.min(...xs)-.5),x1=Math.max(...xs)+.5;
+  const y0=0,y1=Math.max(...ys)*1.15;
+  const X=v=>m.l+(v-x0)/(x1-x0||1)*(W-m.l-m.r), Y=v=>H-m.b-(v-y0)/(y1-y0||1)*(H-m.t-m.b);
+  g.appendChild(svg("line",{x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:"#ccd6de"}));
+  g.appendChild(svg("line",{x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke:"#ccd6de"}));
+  for(let i=0;i<=4;i++){
+    const v=y0+(y1-y0)*i/4;
+    g.appendChild(svg("line",{x1:m.l,y1:Y(v),x2:W-m.r,y2:Y(v),stroke:"#eef2f5"}));
+    const t=svg("text",{x:m.l-7,y:Y(v)+3.5,"text-anchor":"end","font-size":10,"font-family":"IBM Plex Mono, monospace",fill:"#5b6b78"});
+    t.textContent=Math.round(v); g.appendChild(t);
+  }
+  const fit=regress(pts);
+  if(fit){
+    g.appendChild(svg("line",{x1:X(x0),y1:Y(fit.a+fit.b*x0),x2:X(x1),y2:Y(fit.a+fit.b*x1),stroke:"#1b6b8c","stroke-width":1.8}));
+  }
+  pts.forEach((p,i)=>g.appendChild(svg("circle",{cx:X(p.x),cy:Y(p.y),r:4.5,fill:"#d98216",stroke:"#fff","stroke-width":1.5})));
+  const xl=svg("text",{x:(W+m.l)/2,y:H-10,"text-anchor":"middle","font-size":11,"font-family":"IBM Plex Sans Condensed, sans-serif",fill:"#5b6b78"});
+  xl.textContent="Index of difficulty (bits)"; g.appendChild(xl);
+  const yl=svg("text",{x:14,y:H/2,"text-anchor":"middle","font-size":11,transform:`rotate(-90 14 ${H/2})`,"font-family":"IBM Plex Sans Condensed, sans-serif",fill:"#5b6b78"});
+  yl.textContent="Movement time (ms)"; g.appendChild(yl);
+  const wrap=$("#fitWrap"); wrap.innerHTML=""; wrap.appendChild(g);
+  $("#fitNote").innerHTML=fit
+    ? `MT = ${fmt(fit.a,0)} + ${fmt(fit.b,1)}·ID ms, R² = ${fmt(fit.r2,3)}. Report the intercept and slope alongside throughput — TP alone hides a non-zero intercept.`
+    : "At least two conditions are needed for a regression.";
+}
+function drawEndpoints(R){
+  const W=430,H=280,m={l:78,r:14,t:14,b:38};
+  const g=svg("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",style:"display:block"});
+  const rows=TR.filter(t=>!t.practice);
+  const conds=R.map(r=>r.id);
+  const maxAbs=Math.max(...rows.map(t=>Math.abs(t.dx_px)),
+                        ...R.map(r=>Math.abs(r.mdx)+4.133*r.sd/2),1)*1.05;
+  const X=v=>m.l+(v+maxAbs)/(2*maxAbs)*(W-m.l-m.r);
+  const bandH=(H-m.t-m.b)/Math.max(1,conds.length);
+  g.appendChild(svg("line",{x1:X(0),y1:m.t,x2:X(0),y2:H-m.b,stroke:"#ccd6de","stroke-dasharray":"3 3"}));
+  conds.forEach((id,i)=>{
+    const yc=m.t+bandH*(i+.5), r=R[i];
+    const hw=4.133*r.sd/2, lo=r.mdx-hw, hi=r.mdx+hw;
+    g.appendChild(svg("rect",{x:X(lo),y:yc-8,width:Math.max(1,X(hi)-X(lo)),height:16,fill:"#2f7d5d",opacity:.14}));
+    g.appendChild(svg("line",{x1:X(r.mdx),y1:yc-8,x2:X(r.mdx),y2:yc+8,stroke:"#2f7d5d","stroke-width":1.4}));
+    rows.filter(t=>t.condition===id).forEach(t=>{
+      g.appendChild(svg("circle",{cx:X(t.dx_px),cy:yc+(Math.random()-.5)*9,r:2.6,fill:t.hit?"#1b6b8c":"#bf3b30",opacity:.65}));
+    });
+    const lab=svg("text",{x:m.l-7,y:yc+3.5,"text-anchor":"end","font-size":10,"font-family":"IBM Plex Mono, monospace",fill:"#5b6b78"});
+    lab.textContent=id; g.appendChild(lab);
+  });
+  g.appendChild(svg("line",{x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:"#ccd6de"}));
+  const xl=svg("text",{x:(W+m.l)/2,y:H-10,"text-anchor":"middle","font-size":11,"font-family":"IBM Plex Sans Condensed, sans-serif",fill:"#5b6b78"});
+  xl.textContent=`undershoot ← endpoint deviation along the movement axis (px) → overshoot`;
+  g.appendChild(xl);
+  const wrap=$("#epWrap"); wrap.innerHTML=""; wrap.appendChild(g);
+}
+
+/* =====================================================================
+   EXPORT
+   ===================================================================== */
+function spec(){
+  const s=stepOf(),conds=conditions(),b=budget();
+  return{
+    tool:"MDTT Testbed v1.0",
+    generated:new Date().toISOString(),
+    study:{title:C.meta.title,session:C.meta.who,goal:C.meta.goal},
+    config_id:fingerprint(),
+    apparatus:{...C.apparatus,
+      note:is3D()
+        ? "Browser-rendered perspective proxy of a 3D MDTT; spheres on a fronto-parallel circle. Use this spec to implement the task on an XR platform."
+        : "Browser-rendered planar MDTT; CSS pixels."},
+    task_space:is3D()
+      ? {dimensionality:"3D",target:"sphere",layout_plane:"fronto-parallel",
+         depth_mm:C.depthMm,
+         angular:{note:"visual angles subtended at the eye at the stated depth",
+           W_deg:conds.map(c=>+c.Wdeg.toFixed(3)),
+           A_realized_deg:conds.map(c=>+c.Adeg.toFixed(3)),
+           ID_angular_bits:conds.map(c=>+c.IDang.toFixed(3))},
+         inspection_view:{yaw_deg:+normDeg(V3.yaw).toFixed(1),pitch_deg:+V3.pitch.toFixed(1),
+           note:"orbit view is for inspection only; all reported geometry is the frontal view"}}
+      : {dimensionality:"2D",target:C.shape,viewing_distance_mm:C.display.viewMm},
+    display:{...C.display,pxPerMm:+pxPerMm().toFixed(4),devicePixelRatio:window.devicePixelRatio,
+             windowPx:{w:window.innerWidth,h:window.innerHeight}},
+    reporting_unit:C.unit,
+    difficulty:{formulation:"ID = log2(A/W + 1) (Shannon)",
+      conditions:conds.map(c=>({id:c.id,A:c.A,W:c.W,unit:C.unit,
+        A_px:+c.Apx.toFixed(2),W_px:+c.Wpx.toFixed(2),
+        A_realized_px:+c.realPx.toFixed(2),A_realized_mm:+px2mm(c.realPx).toFixed(2),
+        W_mm:+px2mm(c.Wpx).toFixed(2),W_deg:+px2deg(c.Wpx).toFixed(3),
+        A_realized_deg:+px2deg(c.realPx).toFixed(3),
+        ID_bits:+c.ID.toFixed(3),ID_from_nominal_A:+c.IDnom.toFixed(3),
+        ID_angular_bits:+c.IDang.toFixed(3)}))},
+    geometry:{targets:C.n,shape:shapeName(),arrangement:"equally spaced on a circle, first target at 12 o'clock + phase",
+      step:s,chord_over_diameter:+chordFactor().toFixed(4),
+      amplitude_compensation:C.compensate,
+      sequence_rule:`index_{k+1} = (index_k + ${s}) mod ${C.n}, starting at 0`,
+      directions:C.adv.mirror?["cw","ccw"]:["cw"],
+      phase:{mode:C.adv.phaseMode,offsets_deg:phaseList(),k:C.adv.phaseK},
+      movement_directions_deg:movementDirections(phaseList()[0]??0,dirList()).map(d=>+d.toFixed(2))},
+    procedure:{repetitions:C.reps,order:C.order,
+      movements_per_sequence:C.n,practice_dropped_per_sequence:C.practice,
+      analysed_per_sequence:Math.max(0,C.n-C.practice),
+      sequences_total:b.seqs,movements_presented:b.moves,movements_analysed:b.analysed,
+      error_handling:C.errMode==="advance"?"advance to next target, error logged":"repeat target until acquired"},
+    feedback:{active_target_cue:C.fb.activeCue,hover_highlight:C.fb.hover,
+      success:{visual:C.fb.sucV,audio:C.fb.sucA},failure:{visual:C.fb.failV,audio:C.fb.failA},haptic:false},
+    analysis:{MT:"time from the preceding terminal selection to the first click on the current movement",
+      endpoint:"first click of each movement, hits and misses alike",
+      We:"4.133 * SD of dx (endpoint projected on the movement axis)",
+      Ae:"mean(a + dx)",IDe:"log2(Ae/We + 1)",TP:"IDe / MT"}
+  };
+}
+function download(name,text,mime){
+  const b=new Blob([text],{type:mime||"text/plain;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function toCSV(rows){
+  if(!rows.length)return"";
+  const keys=Object.keys(rows[0]);
+  const esc=v=>typeof v==="string"&&/[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v;
+  return keys.join(",")+"\n"+rows.map(r=>keys.map(k=>esc(r[k])).join(",")).join("\n");
+}
+function stamp(){return new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");}
+function renderSpecPreview(){ $("#specPreview").textContent=JSON.stringify(spec(),null,2); }
+
+function renderMethods(){ $("#methodsText").innerHTML=methodsHTML(); }
+function methodsHTML(){
+  const s=stepOf(),conds=conditions().sort((a,b)=>a.ID-b.ID),b=budget();
+  const idr=`${fmt(conds[0].ID,2)}–${fmt(conds[conds.length-1].ID,2)}`;
+  const list=conds.map(c=>`A = ${fmt(c.A,1)} ${C.unit} / W = ${fmt(c.W,1)} ${C.unit} (ID = ${fmt(c.ID,2)} bits)`).join("; ");
+  const fbBits=[];
+  fbBits.push(`the next target was indicated by ${C.fb.activeCue==="fill"?"a filled highlight":C.fb.activeCue==="outline"?"an outline":"a filled highlight with a contrasting outline"}`);
+  if(C.fb.hover)fbBits.push("the active target was additionally highlighted on cursor contact");
+  const suc=[C.fb.sucV&&"visual",C.fb.sucA&&"auditory"].filter(Boolean).join(" and ");
+  const fal=[C.fb.failV&&"visual",C.fb.failA&&"auditory"].filter(Boolean).join(" and ");
+  fbBits.push(suc?`successful selections produced ${suc} feedback`:"successful selections produced no additional feedback");
+  fbBits.push(fal?`unsuccessful selections produced ${fal} feedback`:"unsuccessful selections produced no additional feedback");
+
+  return `
+  <p style="margin:0 0 10px">Participants performed a multi-directional tapping task following ISO/TS 9241-411 Annex B.6.2.2, implemented with the configurable MDTT testbed.
+  ${C.n} ${is3D()?"spherical":C.shape==="circle"?"circular":"square"} targets were spaced equally around a circle${is3D()?` lying in a fronto-parallel plane ${fmt(C.depthMm,0)} mm from the eye`:""}, with the first target at the 12 o'clock position${C.adv.phaseMode==="fixed"&&C.adv.phaseDeg?` rotated by ${C.adv.phaseDeg}°`:C.adv.phaseMode==="counter"?` and the layout rotated across ${phaseList().length} counterbalanced angular offsets`:C.adv.phaseMode==="random"?" and the layout rotated by a random angular offset in each sequence":""}.
+  Selection advanced by ${s} targets per movement (index<sub>k+1</sub> = (index<sub>k</sub> + ${s}) mod ${C.n})${C.adv.mirror?", with clockwise and counter-clockwise sequences mirrored":""}, so that each movement crossed the layout at ${fmt(chordFactor(),3)} × the circle diameter${C.compensate?"; the circle was scaled so that the realized movement amplitude equalled the nominal A":""}.</p>
+  <p style="margin:0 0 10px">Difficulty was manipulated with ${C.amps.length} amplitude${C.amps.length>1?"s":""} × ${C.wids.length} width${C.wids.length>1?"s":""}, giving ${b.conds} conditions spanning ID = ${idr} bits under the Shannon formulation ID = log₂(A/W + 1): ${list}. Amplitudes and widths are reported in ${C.unit}; the display subtended ${fmt(C.display.scrMm,0)} mm across ${C.display.scrPx} px at a viewing distance of ${fmt(C.display.viewMm,0)} mm (${fmt(pxPerMm(),2)} px/mm), so the widths correspond to ${conds.map(c=>fmt(c.Wdeg,2)).filter((v,i,a)=>a.indexOf(v)===i).join(", ")}° of visual angle.${is3D()?` At the stated depth the realized amplitudes subtended ${conds.map(c=>fmt(c.Adeg,2)).filter((v,i,a)=>a.indexOf(v)===i).join(", ")}°, giving angular indices of difficulty of ${conds.map(c=>fmt(c.IDang,2)).join(", ")} bits; depth was held constant across conditions.`:""}</p>
+  <p style="margin:0 0 10px">Each sequence presented ${C.n} movements${C.practice?`, of which the first ${C.practice===1?"":C.practice+" "}${C.practice===1?"movement was":"movements were"} treated as practice and excluded`:""}, leaving ${Math.max(0,C.n-C.practice)} analysed movements per sequence. Conditions were presented in ${C.order==="random"?"randomised":C.order==="ascending"?"ascending-ID":"fixed"} order and repeated ${C.reps} time${C.reps>1?"s":""}, yielding ${b.seqs} sequences and ${b.analysed} analysed movements per participant (${b.perCond} per condition). After an unsuccessful selection the task ${C.errMode==="advance"?"advanced to the next target and the error was logged":"repeated the same target until it was acquired"}.</p>
+  <p style="margin:0">Regarding feedback, ${fbBits.join(", ")}. Feedback states were held constant across conditions. Movement time was measured from the terminal selection of the preceding movement to the first selection of the current one; the first selection of every movement, whether successful or not, entered the endpoint distribution. Effective width was computed as Wₑ = 4.133·SD<sub>x</sub>, effective amplitude as the mean projected movement distance, and throughput as IDₑ/MT.</p>`;
+}
+let CHECKITEMS=[];
+function renderChecklist(){
+  const s=stepOf(),b=budget(),conds=conditions();
+  const ok=v=>v&&String(v).trim().length?`<span style="color:#2f7d5d">✓</span>`:`<span style="color:#bf3b30">needs input</span>`;
+  const items=[
+    ["1","Evaluation goal &amp; priority",C.meta.goal?`stated`:`<span style="color:#bf3b30">not stated</span>`],
+    ["2","Reference procedure &amp; departures","ISO/TS 9241-411 B.6.2.2"+(C.compensate||C.adv.mirror||C.adv.phaseMode!=="fixed"?" + documented departures":"")],
+    ["3","Input / output devices",`${C.apparatus.input} → ${C.apparatus.output} ${ok(C.apparatus.inputModel)}`],
+    ["4","Control-to-display mapping",ok(C.apparatus.mapping)],
+    ["5","Selection trigger &amp; hit definition",ok(C.apparatus.trigger)],
+    ["6","ID formulation","log₂(A/W + 1)"],
+    ["7","A, W and ID per condition",`${b.conds} conditions exported`],
+    ["8","Units for A and W",`${C.unit} + px, mm, deg`],
+    ["9","Dimensionality, shape, dimensions",is3D()?`3D, sphere`:`2D, ${C.shape}`+(C.shape==="square"?" — define W per direction":"")],
+    ["10","Depth / visual angle (XR)",is3D()
+      ? `depth ${fmt(C.depthMm,0)} mm; W ${fmt(Math.min(...conds.map(c=>c.Wdeg)),2)}–${fmt(Math.max(...conds.map(c=>c.Wdeg)),2)}°, A′ ${fmt(Math.min(...conds.map(c=>c.Adeg)),2)}–${fmt(Math.max(...conds.map(c=>c.Adeg)),2)}°`
+      : `planar task; ${fmt(C.display.viewMm,0)} mm viewing distance`],
+    ["11","Visible target count &amp; layout",`${C.n} on a circle, phase ${C.adv.phaseMode}`],
+    ["12","Start target &amp; sequence rule",`target 1 (12 o'clock), step ${s}`],
+    ["13","Attempted vs. analysed movements",`${b.moves} presented, ${b.analysed} analysed`],
+    ["14","Repetitions and blocks",`${C.reps} × ${b.conds} × ${dirList().length} dir × ${phaseList().length} phase`],
+    ["15","Realized amplitudes verified",`chord = ${fmt(chordFactor(),3)} × diameter`],
+    ["16","Sequence direction &amp; phase",`${C.adv.mirror?"mirrored":"single direction"}, phase ${C.adv.phaseMode}`],
+    ["17","Active-target cue",C.fb.activeCue],
+    ["18","Hover / success / failure feedback",`hover ${C.fb.hover?"on":"off"}, success ${[C.fb.sucV&&"vis",C.fb.sucA&&"aud"].filter(Boolean).join("+")||"none"}, failure ${[C.fb.failV&&"vis",C.fb.failA&&"aud"].filter(Boolean).join("+")||"none"}`],
+    ["19","Error definition &amp; consequence",C.errMode==="advance"?"first click outside the target; task advances":"first click outside the target; target repeats"],
+    ["20","Feedback held constant",`yes — feedback is not manipulated in this configuration`],
+    ["21","MT with an error or accuracy measure",`MT and error rate reported per condition`],
+    ["22","Throughput alongside MT and accuracy",`TP = IDₑ/MT, reported next to MT and error rate`],
+    ["23","Regression / model fit",`MT regressed on ID; intercept, slope and R² reported`],
+    ["24","Effective measures stated",`Aₑ, Wₑ = 4.133·SDₓ, IDₑ from movement endpoints`],
+    ["25","Reconstructable configuration",`JSON spec with realized geometry and sequence rule`],
+    ["26","Implementation, trial-level and analysis data",TR.length?`trial CSV (${TR.length} rows) + summary CSV`:`<span style="color:#bf3b30">no pilot data yet</span>`]
+  ];
+  CHECKITEMS=items;
+  $("#checkTable").innerHTML=`<thead><tr><th style="width:34px">#</th><th>Checklist item</th><th style="text-align:left">Value in this configuration</th></tr></thead><tbody>`+
+    items.map(i=>`<tr><td class="num">${i[0]}</td><td>${i[1]}</td><td style="text-align:left" class="num">${i[2]}</td></tr>`).join("")+"</tbody>";
+}
+
+
+/* =====================================================================
+   REPORT SHEET
+   ===================================================================== */
+function fingerprint(){
+  const src=JSON.stringify({C,step:stepOf(),conds:conditions().map(c=>[c.A,c.W,+c.ID.toFixed(4)])});
+  let h=2166136261;
+  for(let i=0;i<src.length;i++){h^=src.charCodeAt(i);h=Math.imul(h,16777619);}
+  return (h>>>0).toString(36).toUpperCase().padStart(7,"0").slice(0,7);
+}
+let CONFIRM=null;
+function outstanding(){
+  const out=[],b=budget();
+  CHECKITEMS.forEach(i=>{
+    if(/needs input|not stated/.test(i[2]))
+      out.push(`Checklist item ${i[0]} — ${i[1].replace(/&amp;/g,"&")} is still empty.`);
+  });
+  if(!TR.length) out.push("No pilot data yet. Run at least one full pass so the reported task is the task you actually piloted.");
+  if(b.perCond<15) out.push(`Only ${b.perCond} analysed movements per condition — Wₑ and throughput will be unstable at this budget.`);
+  if(!is3D()&&C.unit==="px") out.push("Amplitudes and widths are specified in pixels. The sheet converts them to mm and degrees; keep those conversions in the paper, since pixels alone do not fix physical extent.");
+  if(is3D()) out.push("The in-browser run is a perspective proxy, not an HMD. Report the XR implementation you actually used — headset, tracking, selection ray or hand point — alongside this configuration.");
+  if(C.shape==="square"&&!is3D()) out.push("Square targets: state explicitly how W is determined for approaches that are not axis-aligned.");
+  return out;
+}
+function reportRows(){
+  const s=stepOf(),b=budget(),conds=conditions().slice().sort((a,x)=>a.ID-x.ID);
+  const fbSuc=[C.fb.sucV&&"visual",C.fb.sucA&&"audio"].filter(Boolean).join(" + ")||"none";
+  const fbFail=[C.fb.failV&&"visual",C.fb.failA&&"audio"].filter(Boolean).join(" + ")||"none";
+  return {
+    s,b,conds,
+    study:[
+      ["Study",C.meta.title||"—"],["Session / participant",C.meta.who||"—"],
+      ["Evaluation goal",C.meta.goal||"—"],
+      ["Reference procedure","ISO/TS 9241-411 Annex B.6.2.2 (multi-directional tapping test)"]
+    ],
+    apparatus:[
+      ["Input",`${C.apparatus.input}${C.apparatus.inputModel?" — "+C.apparatus.inputModel:""}`],
+      ["Output",C.apparatus.output],
+      ["Control-to-display mapping",C.apparatus.mapping||"—"],
+      ["Selection trigger & hit rule",C.apparatus.trigger||"—"],
+      ["Display calibration",`${C.display.scrPx} px across ${fmt(C.display.scrMm,0)} mm (${fmt(pxPerMm(),2)} px/mm)`],
+      [is3D()?"Target-plane depth":"Viewing distance",`${fmt(refDistMm(),0)} mm`]
+    ],
+    geometry:[
+      ["Task space",is3D()?"3D — spheres on a fronto-parallel circle":"2D — planar circle"],
+      ["Target shape",shapeName()+(is3D()||C.shape==="circle"?" (direction-invariant W)":" (W varies with approach direction)")],
+      ["Visible targets N",C.n],
+      ["Layout","equally spaced on a circle, first target at 12 o'clock"+(C.adv.phaseDeg&&C.adv.phaseMode==="fixed"?` rotated ${C.adv.phaseDeg}°`:"")],
+      ["Sequence rule",`index(k+1) = (index(k) + ${s}) mod ${C.n}`],
+      ["Realized chord",`${fmt(chordFactor(),3)} × circle diameter${C.compensate?" (circle scaled so the chord equals nominal A)":""}`],
+      ["Movement directions",`${new Set(movementDirections(phaseList()[0]??0,dirList()).map(d=>Math.round(d*10)/10)).size} distinct`],
+      ["Sequence direction",C.adv.mirror?"clockwise and counter-clockwise (mirrored)":"clockwise only"],
+      ["Angular phase",C.adv.phaseMode==="fixed"?`fixed at ${C.adv.phaseDeg}°`:C.adv.phaseMode==="counter"?`counterbalanced across ${phaseList().length} offsets`:"randomised per sequence"]
+    ],
+    procedure:[
+      ["Conditions",`${b.conds} (${C.amps.length} A × ${C.wids.length} W)`],
+      ["ID range",`${fmt(conds[0].ID,2)}–${fmt(conds[conds.length-1].ID,2)} bits, Shannon ID = log2(A/W + 1)`],
+      ["Repetitions / order",`${C.reps} repetition${C.reps>1?"s":""} per condition, ${C.order==="random"?"randomised":C.order==="ascending"?"ascending-ID":"fixed"} order`],
+      ["Movements per sequence",`${C.n} presented, ${Math.max(0,C.n-C.practice)} analysed (first ${C.practice} dropped)`],
+      ["Total per participant",`${b.seqs} sequences · ${b.moves} movements presented · ${b.analysed} analysed (${b.perCond} per condition)`],
+      ["Error handling",C.errMode==="advance"?"advance to the next target, error logged":"repeat the same target until acquired"]
+    ],
+    feedback:[
+      ["Active-target cue",C.fb.activeCue],
+      ["Hover / contact highlight",C.fb.hover?"on":"off"],
+      ["Success feedback",fbSuc],["Failure feedback",fbFail],["Haptic feedback","none"],
+      ["Held constant","yes — feedback is not an independent variable in this configuration"]
+    ],
+    analysis:[
+      ["Movement time","from the terminal selection of the preceding movement to the first selection of the current one"],
+      ["Endpoint","first selection of every movement, hits and misses alike"],
+      ["Effective width","Wₑ = 4.133 · SD of endpoint deviation along the movement axis"],
+      ["Effective amplitude","Aₑ = mean(a + dx)"],
+      ["Throughput","TP = IDₑ / MT, computed per condition"],
+      ["Model fit","MT regressed on ID; intercept, slope and R² reported alongside throughput"],
+      ["Reported measure set","movement time, error rate, throughput, MT–ID regression, and effective measures — reported together, not interchangeably"]
+    ]
+  };
+}
+function renderReport(){
+  const D=reportRows(), fp=fingerprint(), R=analyse();
+  const dl=rows=>`<dl class="kv">`+rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join("")+`</dl>`;
+  const sec=(n,title,r,body)=>`<section><h4>${n} · ${title} ${r?`<span class="r">${r}</span>`:""}</h4>${body}</section>`;
+  const mmCols=C.unit!=="mm";
+  let ct=`<div class="tablewrap"><table><thead><tr><th>Condition</th><th>A (${U()})</th><th>A′ realized (${U()})</th><th>W (${U()})</th>`+
+    (mmCols?`<th>A′ (mm)</th><th>W (mm)</th>`:``)+
+    `<th>A′ (deg)</th><th>W (deg)</th><th>ID</th>${is3D()?"<th>ID angular</th>":""}</tr></thead><tbody>`;
+  D.conds.forEach(c=>{
+    ct+=`<tr><td class="num">${c.id}</td><td class="num">${fmt(c.A,1)}</td><td class="num">${fmt(fromPx(c.realPx),1)}</td><td class="num">${fmt(c.W,1)}</td>`+
+      (mmCols?`<td class="num">${fmt(px2mm(c.realPx),1)}</td><td class="num">${fmt(px2mm(c.Wpx),1)}</td>`:``)+
+      `<td class="num">${fmt(c.Adeg,2)}</td><td class="num">${fmt(c.Wdeg,2)}</td>
+      <td class="num"><b>${fmt(c.ID,2)}</b></td>${is3D()?`<td class="num">${fmt(c.IDang,2)}</td>`:""}</tr>`;
+  });
+  ct+="</tbody></table></div>";
+
+  let pilot=`<p class="hint" style="margin:8px 0 0">No pilot data collected in this session.</p>`;
+  if(R.length){
+    pilot=`<div class="tablewrap"><table><thead><tr><th>Condition</th><th>n</th><th>ID</th><th>MT (ms)</th><th>Err (%)</th><th>Wₑ (${U()})</th><th>IDₑ</th><th>TP (bps)</th></tr></thead><tbody>`+
+      R.map(r=>`<tr><td class="num">${r.id}</td><td class="num">${r.n}</td><td class="num">${fmt(r.ID,2)}</td><td class="num">${fmt(r.MT,0)}</td><td class="num">${fmt(100*r.err,1)}</td><td class="num">${fmt(fromPx(r.We_px),2)}</td><td class="num">${fmt(r.IDe,2)}</td><td class="num">${fmt(r.TP,2)}</td></tr>`).join("")+
+      `</tbody></table></div><p class="hint" style="margin:8px 0 0">Pilot values from this session only — one operator, ${TR.filter(t=>!t.practice).length} analysed movements. They document that the configuration runs, not the effect under study.</p>`;
+  }
+  const todo=outstanding();
+  const html=`<div class="sheet" id="reportSheet">
+    <div class="sheet-head">
+      <h2>MDTT configuration report</h2>
+      <span class="stamp">config ${fp}<br>${new Date().toISOString().slice(0,10)}${CONFIRM&&CONFIRM.fp===fp?`<br>confirmed ${CONFIRM.at}`:""}</span>
+    </div>
+    ${sec(1,"Study and reference procedure","",dl(D.study))}
+    ${sec(2,"Apparatus and mapping","R1",dl(D.apparatus))}
+    ${sec(3,"Difficulty conditions","R2",ct)}
+    ${sec(4,"Target geometry","R3",dl(D.geometry))}
+    ${sec(5,"Procedure, trials and error handling","R4",dl(D.procedure))}
+    ${sec(6,"Feedback","R5",dl(D.feedback))}
+    ${sec(7,"Performance measures and Fitts' law analysis","R6",dl(D.analysis)+pilot)}
+    ${sec(8,"Methods paragraph","",`<div class="prose">${methodsHTML()}</div>`)}
+    ${sec(9,"Before you submit","",todo.length?`<ul class="todo">${todo.map(t=>`<li>${t}</li>`).join("")}</ul>`:`<p class="stampline">Nothing outstanding — every checklist item has a value and pilot data is attached.</p>`)}
+  </div>`;
+  $("#reportWrap").innerHTML=html;
+  $("#confirmFlag").innerHTML = !CONFIRM
+    ? `<div class="flag">Not confirmed yet. Confirming stamps the sheet with a configuration ID (<span class="num">${fp}</span>) that is also written into the exported JSON and CSV, so a reviewer can tell which files belong together.</div>`
+    : CONFIRM.fp===fp
+      ? `<div class="flag ok"><b>Confirmed ${CONFIRM.at}</b> as configuration <b>${fp}</b>. Exported files carry the same ID.</div>`
+      : `<div class="flag err"><b>Configuration changed since you confirmed it.</b> Confirmed ${CONFIRM.fp}, now ${fp}. Re-confirm before you run, or the sheet and your data will disagree.</div>`;
+}
+function reportMarkdown(){
+  const D=reportRows(), fp=fingerprint(), R=analyse();
+  const kv=rows=>rows.map(r=>`| ${r[0]} | ${String(r[1]).replace(/\|/g,"/")} |`).join("\n");
+  const head="| Item | Value |\n|---|---|\n";
+  let md=`# MDTT configuration report\n\n`+
+    `**Config ID:** ${fp}  \n**Generated:** ${new Date().toISOString().slice(0,10)}`+
+    (CONFIRM&&CONFIRM.fp===fp?`  \n**Confirmed:** ${CONFIRM.at}`:"")+`\n\n`+
+    `## 1. Study and reference procedure\n\n${head}${kv(D.study)}\n\n`+
+    `## 2. Apparatus and mapping (R1)\n\n${head}${kv(D.apparatus)}\n\n`+
+    `## 3. Difficulty conditions (R2)\n\n`+
+    (()=>{
+      const mmCols=C.unit!=="mm";
+      const cols=["Condition",`A (${U()})`,`A' realized (${U()})`,`W (${U()})`]
+        .concat(mmCols?["A' (mm)","W (mm)"]:[]).concat(["A' (deg)","W (deg)","ID"]).concat(is3D()?["ID angular"]:[]);
+      return `| ${cols.join(" | ")} |\n|${cols.map(()=>"---").join("|")}|\n`+
+        D.conds.map(c=>{
+          const cells=[c.id,fmt(c.A,1),fmt(fromPx(c.realPx),1),fmt(c.W,1)]
+            .concat(mmCols?[fmt(px2mm(c.realPx),1),fmt(px2mm(c.Wpx),1)]:[])
+            .concat([fmt(c.Adeg,2),fmt(c.Wdeg,2),fmt(c.ID,2)]).concat(is3D()?[fmt(c.IDang,2)]:[]);
+          return `| ${cells.join(" | ")} |`;
+        }).join("\n")+`\n\n`;
+    })()+
+    `## 4. Target geometry (R3)\n\n${head}${kv(D.geometry)}\n\n`+
+    `## 5. Procedure, trials and error handling (R4)\n\n${head}${kv(D.procedure)}\n\n`+
+    `## 6. Feedback (R5)\n\n${head}${kv(D.feedback)}\n\n`+
+    `## 7. Performance measures and Fitts' law analysis (R6)\n\n${head}${kv(D.analysis)}\n\n`;
+  if(R.length){
+    md+=`### Pilot results (this session)\n\n| Condition | n | ID | MT (ms) | Err (%) | We (${U()}) | IDe | TP (bps) |\n|---|---|---|---|---|---|---|---|\n`+
+      R.map(r=>`| ${r.id} | ${r.n} | ${fmt(r.ID,2)} | ${fmt(r.MT,0)} | ${fmt(100*r.err,1)} | ${fmt(fromPx(r.We_px),2)} | ${fmt(r.IDe,2)} | ${fmt(r.TP,2)} |`).join("\n")+`\n\n`;
+  }
+  const tmp=document.createElement("div"); tmp.innerHTML=methodsHTML();
+  md+=`## 8. Methods paragraph\n\n${tmp.innerText.trim()}\n\n`;
+  const todo=outstanding();
+  md+=`## 9. Before you submit\n\n`+(todo.length?todo.map(t=>`- [ ] ${t}`).join("\n"):"Nothing outstanding.")+`\n`;
+  return md;
+}
+
+/* ---------------- wiring ---------------- */
+function syncDimUI(){
+  const three=is3D();
+  $("#shapeField").classList.toggle("hidden",three);
+  $("#depthField").classList.toggle("hidden",!three);
+  $("#view3dBar").classList.toggle("hidden",!three);
+  $("#view3dBar").style.display=three?"flex":"none";
+  $$("#dimSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.d===C.dim)));
+  $$("#unitSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.u===C.unit)));
+  const pxBtn=$('#unitSeg button[data-u="px"]');
+  pxBtn.disabled=three; pxBtn.title=three?"Pixels do not define a size in a 3D task — use mm, cm, m or degrees":"";
+  pxBtn.style.opacity=three?.4:1;
+  $("#depthMm").value=C.depthMm;
+}
+function applySpecToUI(){
+  $("#inKind").value=C.apparatus.input; $("#outKind").value=C.apparatus.output;
+  $("#inModel").value=C.apparatus.inputModel; $("#mapping").value=C.apparatus.mapping; $("#trigger").value=C.apparatus.trigger;
+  $("#amps").value=C.amps.join(", "); $("#wids").value=C.wids.join(", ");
+  $("#scrPx").value=C.display.scrPx; $("#scrMm").value=C.display.scrMm; $("#viewMm").value=C.display.viewMm;
+  $$("#unitSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.u===C.unit)));
+  $$("#shapeSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.s===C.shape)));
+  $("#nTargets").value=C.n; $("#reps").value=C.reps; $("#stepMode").value=C.stepMode;
+  $("#stepVal").value=C.step; $("#stepVal").disabled=C.stepMode==="auto";
+  $("#compensate").checked=C.compensate; $("#practice").value=C.practice;
+  $("#order").value=C.order; $("#errMode").value=C.errMode;
+  $("#activeCue").value=C.fb.activeCue; $("#fbHover").checked=C.fb.hover;
+  $("#fbSucV").checked=C.fb.sucV; $("#fbSucA").checked=C.fb.sucA;
+  $("#fbFailV").checked=C.fb.failV; $("#fbFailA").checked=C.fb.failA;
+  $("#advMirror").checked=C.adv.mirror; $("#phaseMode").value=C.adv.phaseMode;
+  $("#phaseDeg").value=C.adv.phaseDeg; $("#phaseK").value=C.adv.phaseK;
+  $("#phaseK").disabled=C.adv.phaseMode!=="counter";
+  $("#mTitle").value=C.meta.title; $("#mWho").value=C.meta.who; $("#mGoal").value=C.meta.goal;
+  syncDimUI();
+}
+bind();
+$("#startBtn").addEventListener("click",startRun);
+$("#abortBtn").addEventListener("click",stopRun);
+$("#clearBtn").addEventListener("click",()=>{if(!TR.length||confirm("Discard all collected movements?")){TR=[];renderResults();renderRunState();renderChecklist();}});
+$("#dlSpec").addEventListener("click",()=>download(`mdtt_config_${stamp()}.json`,JSON.stringify(spec(),null,2),"application/json"));
+$("#dlTrials").addEventListener("click",()=>{
+  if(!TR.length){alert("No trials recorded yet. Run a pilot first.");return;}
+  download(`mdtt_trials_${stamp()}.csv`,toCSV(TR.map(t=>({config_id:fingerprint(),session:C.meta.who||"NA",...t}))),"text/csv");
+});
+$("#dlSummary").addEventListener("click",()=>{
+  const R=analyse(); if(!R.length){alert("No analysable movements yet.");return;}
+  download(`mdtt_summary_${stamp()}.csv`,toCSV(R.map(r=>({
+    config_id:fingerprint(),session:C.meta.who||"NA",condition:r.id,n:r.n,A:r.A,W:r.W,unit:C.unit,ID_bits:+r.ID.toFixed(3),
+    MT_ms:+r.MT.toFixed(1),error_rate:+r.err.toFixed(4),
+    We_px:+r.We_px.toFixed(2),Ae_px:+r.Ae_px.toFixed(2),IDe_bits:+r.IDe.toFixed(3),TP_bps:+r.TP.toFixed(3)
+  }))),"text/csv");
+});
+$("#loadSpecBtn").addEventListener("click",()=>$("#loadSpec").click());
+$("#loadSpec").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const s=JSON.parse(r.result);
+      C.meta={title:s.study?.title||"",who:s.study?.session||"",goal:s.study?.goal||""};
+      C.apparatus={input:s.apparatus?.input||"Mouse",inputModel:s.apparatus?.inputModel||"",output:s.apparatus?.output||"Monitor",mapping:s.apparatus?.mapping||"",trigger:s.apparatus?.trigger||""};
+      C.display={scrPx:s.display?.scrPx||1920,scrMm:s.display?.scrMm||530,viewMm:s.display?.viewMm||600};
+      C.unit=s.reporting_unit||"px";
+      const cds=s.difficulty?.conditions||[];
+      if(cds.length){C.amps=[...new Set(cds.map(c=>c.A))];C.wids=[...new Set(cds.map(c=>c.W))];}
+      C.dim=s.task_space?.dimensionality==="3D"?"3d":"2d";
+      C.depthMm=s.task_space?.depth_mm||1000;
+      C.n=s.geometry?.targets||13;
+      C.shape=(s.geometry?.shape==="sphere")?"circle":(s.geometry?.shape||"circle");
+      C.step=s.geometry?.step||autoStep(C.n); C.stepMode="manual";
+      C.compensate=!!s.geometry?.amplitude_compensation;
+      C.adv.mirror=(s.geometry?.directions||["cw"]).length>1;
+      C.adv.phaseMode=s.geometry?.phase?.mode||"fixed";
+      C.adv.phaseDeg=(s.geometry?.phase?.offsets_deg||[0])[0]||0;
+      C.adv.phaseK=s.geometry?.phase?.k||2;
+      C.reps=s.procedure?.repetitions||2; C.practice=s.procedure?.practice_dropped_per_sequence||0;
+      C.order=s.procedure?.order||"random";
+      C.errMode=(s.procedure?.error_handling||"").startsWith("repeat")?"repeat":"advance";
+      const fb=s.feedback||{};
+      C.fb={activeCue:fb.active_target_cue||"fill",hover:!!fb.hover_highlight,
+            sucV:!!fb.success?.visual,sucA:!!fb.success?.audio,failV:!!fb.failure?.visual,failA:!!fb.failure?.audio};
+      applySpecToUI(); renderAll();
+    }catch(err){alert("Could not read that file as an MDTT config: "+err.message);}
+  };
+  r.readAsText(f);
+});
+$("#copyMethods").addEventListener("click",()=>{
+  navigator.clipboard.writeText($("#methodsText").innerText).then(
+    ()=>{$("#copyMethods").textContent="Copied";setTimeout(()=>$("#copyMethods").textContent="Copy text",1400);},
+    ()=>alert("Copy failed — select the text manually."));
+});
+// 3D orbit
+const pv=$("#previewWrap");
+pv.addEventListener("pointerdown",e=>{
+  if(!is3D())return;
+  V3.drag={x:e.clientX,y:e.clientY,yaw:V3.yaw,pitch:V3.pitch};
+  try{pv.setPointerCapture(e.pointerId);}catch(err){}
+  e.preventDefault();
+});
+pv.addEventListener("pointermove",e=>{
+  if(!V3.drag||!is3D())return;
+  V3.yaw=V3.drag.yaw+(e.clientX-V3.drag.x)*0.45;
+  V3.pitch=clamp(V3.drag.pitch-(e.clientY-V3.drag.y)*0.45,-85,85);
+  render3D(); updateOrbit();
+});
+["pointerup","pointercancel","pointerleave"].forEach(ev=>pv.addEventListener(ev,()=>{V3.drag=null;}));
+$("#frontViewBtn").addEventListener("click",()=>{V3.yaw=0;V3.pitch=0;render3D();updateOrbit();});
+
+// report
+$("#confirmBtn").addEventListener("click",()=>{
+  CONFIRM={fp:fingerprint(),at:new Date().toISOString().slice(0,16).replace("T"," ")};
+  renderReport();
+});
+$("#printBtn").addEventListener("click",()=>window.print());
+$("#dlMd").addEventListener("click",()=>download(`mdtt_report_${fingerprint()}.md`,reportMarkdown(),"text/markdown"));
+$("#copyMd").addEventListener("click",()=>{
+  navigator.clipboard.writeText(reportMarkdown()).then(
+    ()=>{$("#copyMd").textContent="Copied";setTimeout(()=>$("#copyMd").textContent="Copy as Markdown",1400);},
+    ()=>alert("Copy failed — use Download .md instead."));
+});
+window.addEventListener("resize",()=>{renderFitFlag();});
+C.display.scrPx=window.screen.width||1920;
+applySpecToUI();
+renderAll();
+</script>
+</body>
+</html>
