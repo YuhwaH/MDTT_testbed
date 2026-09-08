@@ -90,15 +90,9 @@ The tool runs entirely client-side. There is no server, no analytics, and no net
 ```
 index.html    the complete testbed (single self-contained file)
 README.md     this file
-LICENSE       licence for the code
-docs/         screenshots and example exports
 ```
 
 Reporting the `config_id` and depositing the exported JSON alongside your data makes the task reconstructable by anyone reading the paper.
-
-## Contributing
-
-Issues and pull requests are welcome, particularly: XR-native implementations of the same specification, additional Fitts' law formulations, and reports of configurations where the geometry checks give a misleading result. Please include the exported configuration JSON when reporting a problem.
 
 ## Licence
 
