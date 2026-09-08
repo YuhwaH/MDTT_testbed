@@ -6,7 +6,7 @@ A configurable browser-based implementation of the **Multi-Directional Tapping T
 
 ## What it is for
 
-Our review of 157 MDTT studies, spanning conventional and XR environments, found a stable procedural core alongside substantial variation in target count, shape, units, sequence handling, feedback, and the performance measures reported — variation that is frequently under-documented and that can change the measured performance. This tool is a planning and documentation aid for that problem. It makes every task parameter explicit, shows the geometry a configuration actually produces (which is not always the geometry you specified), runs a pilot so you can confirm the task behaves as intended, and emits a machine-readable specification you can cite or deposit alongside a paper.
+That review, spanning conventional and XR environments, found a stable procedural core alongside substantial variation in target count, shape, units, sequence handling, feedback, and the performance measures reported — variation that is frequently under-documented and that can change the measured performance. This tool is a planning and documentation aid for that problem. It makes every task parameter explicit, shows the geometry a configuration actually produces (which is not always the geometry you specified), runs a pilot so you can confirm the task behaves as intended, and emits a machine-readable specification you can cite or deposit alongside a paper.
 
 It is deliberately not a standardisation device. Defaults are defaults; the tool flags the consequences of a choice rather than forbidding it.
 
