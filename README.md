@@ -1,4 +1,4 @@
-# MDTT_testbed_prototype
+# MDTT_testbed
 
 A configurable browser-based implementation of the **Multi-Directional Tapping Task (MDTT)** described in ISO/TS 9241-411 Annex B.6.2.2, built as the companion tool for:
 
