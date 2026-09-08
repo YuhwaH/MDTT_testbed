@@ -4,9 +4,6 @@ A configurable browser-based implementation of the **Multi-Directional Tapping T
 
 > *Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed.*
 
-<!-- ![The testbed's geometry tab](docs/screenshot-geometry.png) -->
-
----
 
 ## What it is for
 
