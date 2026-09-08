@@ -105,22 +105,6 @@ LICENSE       licence for the code
 docs/         screenshots and example exports
 ```
 
-## Citing
-
-If the testbed contributes to published work, please cite the paper:
-
-```bibtex
-@inproceedings{hong2027mdtt,
-  author    = {Hong, Yuhwa and Kim, Haejun and Xiong, Shuping and Kim, Woojoo},
-  title     = {Designing and Reporting Multi-Directional Tapping Tasks:
-               A Systematic Review, Practical Guidelines, and a Configurable Testbed},
-  booktitle = {Proceedings of the CHI Conference on Human Factors in Computing Systems},
-  series    = {CHI '27},
-  year      = {2027},
-  doi       = {TODO}
-}
-```
-
 Reporting the `config_id` and depositing the exported JSON alongside your data makes the task reconstructable by anyone reading the paper.
 
 ## Contributing
