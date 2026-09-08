@@ -16,7 +16,7 @@ It is deliberately not a standardisation device. Defaults are defaults; the tool
 
 ## Quick start
 
-1. Open the live link above, or clone the repository and open `index.html` in any modern browser (Chrome, Firefox, Safari, Edge). The file is fully self-contained — no build step, no dependencies, works offline.
+1. Open `index.html` in any modern browser (Chrome, Firefox, Safari, Edge). The file is fully self-contained — no build step, no dependencies, works offline.
 
 2. Set your display calibration in **R2** (screen width in pixels and millimetres, viewing distance). Everything else depends on it.
 3. Configure the task in the left panel. The panel groups map one-to-one onto the paper's recommendations R1–R5; R6, on performance measures and Fitts' law analysis, is covered by the Results and Report tabs.
