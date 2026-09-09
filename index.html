@@ -637,8 +637,10 @@ function sphereDefs(pfx){
     return rg;
   };
   defs.appendChild(grad("sphIdle","#f4f8fa","#a5b5c0"));
-  defs.appendChild(grad("sphAct","#f8cf8d","#bd6c07"));
-  defs.appendChild(grad("sphHover","#ffe2b0","#d98216"));
+  defs.appendChild(grad("sphAct","#fff09d","#a68a00"));
+  defs.appendChild(grad("sphHover","#fff7c2","#f2c40c"));
+  defs.appendChild(grad("sphOk","#a8ddc0","#1f6b48"));
+  defs.appendChild(grad("sphFail","#eeaea5","#8c2a22"));
   return defs;
 }
 
@@ -902,7 +904,7 @@ function renderAll(){ renderPreview(); renderRose(); renderSummary(); }
    TASK RUNNER
    ===================================================================== */
 let TR=[];                       // trial records
-const RUN={active:false,plan:[],si:0,o:[],pts:[],mi:0,t0:0,from:null,attempts:0,seqErr:0,W:0,cond:null,phase:0,dir:"cw",scale:1};
+const RUN={active:false,plan:[],si:0,o:[],pts:[],mi:0,t0:0,from:null,attempts:0,seqErr:0,W:0,cond:null,phase:0,dir:"cw",scale:1,locked:false,fbTimer:null};
 let audio=null;
 function beep(freq,dur,type){
   try{
@@ -954,6 +956,7 @@ function startRun(){
 function escHandler(e){ if(e.key==="Escape") stopRun(); }
 function stopRun(){
   RUN.active=false;
+  clearTimeout(RUN.fbTimer); RUN.locked=false;
   $("#stage").classList.remove("on");
   document.removeEventListener("keydown",escHandler);
   $("#stageSvg").removeEventListener("pointerdown",onClick);
@@ -972,27 +975,34 @@ function loadSequence(){
   RUN.o=orderOf(s.dir); RUN.W=s.cond.Wpx; RUN.mi=0; RUN.attempts=0; RUN.seqErr=0; RUN.from=null;
   drawStage(); updateHud();
 }
-function drawStage(hoverIdx){
+function drawStage(hoverIdx,feedback){
   const svgEl=$("#stageSvg"); svgEl.innerHTML="";
   if(is3D()) svgEl.appendChild(sphereDefs("st"));
   const activeIdx=RUN.o[RUN.mi];
   RUN.pts.forEach((p,i)=>{
     const act=i===activeIdx;
     let fill=is3D()?"url(#stsphIdle)":"#e3e9ed",stroke=is3D()?"#93a5b1":"#c2cdd5",sw=1;
-    if(act){
-      const on=is3D()?"url(#stsphAct)":"#d98216";
-      if(C.fb.activeCue==="fill"){fill=on;stroke="#a35f0a";}
-      else if(C.fb.activeCue==="outline"){stroke="#d98216";sw=3;}
+    if(feedback&&feedback.idx===i){
+      fill=is3D()?(feedback.ok?"url(#stsphOk)":"url(#stsphFail)"):(feedback.ok?"#2f7d5d":"#bf3b30");
+      stroke=feedback.ok?"#1c5b41":"#8c2a22";
+    }else if(act){
+      const on=is3D()?"url(#stsphAct)":"#f2c40c";
+      if(C.fb.activeCue==="fill"){fill=on;stroke="#8f7300";}
+      else if(C.fb.activeCue==="outline"){stroke="#f2c40c";sw=3;}
       else{fill=on;stroke="#12202b";sw=2.5;}
-      if(C.fb.hover&&hoverIdx===i){fill=is3D()?"url(#stsphHover)":"#f0ad4e";}
+      if(C.fb.hover&&hoverIdx===i){fill=is3D()?"url(#stsphHover)":"#ffe066";}
     }
     svgEl.appendChild(shapeNode(shapeName(),p.x,p.y,RUN.W,{fill,stroke,"stroke-width":sw,class:"flash"}));
   });
 }
-function flash(color,ms){
-  const svgEl=$("#stageSvg");
-  const r=svg("rect",{x:0,y:0,width:"100%",height:"100%",fill:color,opacity:.16});
-  svgEl.appendChild(r); setTimeout(()=>r.remove(),ms||110);
+// Colors the just-selected target green/red, holds it briefly, then hands control to `after`
+// (which shows the next target). Skipped instantly if the visual feedback for this outcome is off.
+function showFeedbackThen(idx,ok,after){
+  if(!(ok?C.fb.sucV:C.fb.failV)){ after(); return; }
+  RUN.locked=true;
+  drawStage(undefined,{idx,ok});
+  clearTimeout(RUN.fbTimer);
+  RUN.fbTimer=setTimeout(()=>{ RUN.locked=false; after(); },110);
 }
 function hit(p,t){
   if(is3D()||C.shape==="circle")return Math.hypot(p.x-t.x,p.y-t.y)<=RUN.W/2;
@@ -1005,13 +1015,18 @@ function onMove(e){
   drawStage(hit(p,RUN.pts[idx])?idx:-1);
 }
 function onClick(e){
+  if(RUN.locked)return;                 // ignore clicks while the outcome color is showing
   const r=$("#stageSvg").getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};
   const idx=RUN.o[RUN.mi],t=RUN.pts[idx],ok=hit(p,t),now=performance.now();
 
   if(RUN.mi===0){                       // start of the sequence: acquire target 1, not a recorded movement
-    if(!ok){ if(C.fb.failV)flash("#bf3b30"); if(C.fb.failA)beep(200,.12,"square"); return; }
-    if(C.fb.sucV)flash("#2f7d5d",90); if(C.fb.sucA)beep(880,.05);
-    RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.mi=1; RUN.attempts=0; drawStage(); updateHud(); return;
+    if(!ok){ if(C.fb.failA)beep(200,.12,"square"); showFeedbackThen(idx,false,()=>drawStage()); return; }
+    if(C.fb.sucA)beep(880,.05);
+    showFeedbackThen(idx,true,()=>{
+      RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.mi=1; RUN.attempts=0;
+      drawStage(); updateHud();
+    });
+    return;
   }
 
   RUN.attempts++;
@@ -1036,14 +1051,14 @@ function onClick(e){
     TR[TR.length-1].attempts=RUN.attempts;
   }
 
-  if(ok){ if(C.fb.sucV)flash("#2f7d5d",90); if(C.fb.sucA)beep(880,.05); }
-  else  { if(C.fb.failV)flash("#bf3b30");   if(C.fb.failA)beep(200,.12,"square"); }
+  if(ok){ if(C.fb.sucA)beep(880,.05); } else { if(C.fb.failA)beep(200,.12,"square"); }
 
-  if(!ok&&C.errMode==="repeat")return;   // stay on the same target
-
-  RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.attempts=0; RUN.mi++;
-  if(RUN.mi>C.n){ RUN.si++; loadSequence(); return; }
-  drawStage(); updateHud();
+  showFeedbackThen(idx,ok,()=>{
+    if(!ok&&C.errMode==="repeat"){ drawStage(); return; }   // stay on the same target
+    RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.attempts=0; RUN.mi++;
+    if(RUN.mi>C.n){ RUN.si++; loadSequence(); return; }
+    drawStage(); updateHud();
+  });
 }
 function updateHud(){
   $("#hudSeq").textContent=`sequence ${RUN.si+1}/${RUN.plan.length}`;
