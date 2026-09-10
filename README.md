@@ -16,7 +16,7 @@ It is deliberately not a standardisation device. Defaults are defaults; the tool
 
 2. Set your display calibration in **R2** (screen width in pixels and millimetres, viewing distance). Everything else depends on it.
 3. Configure the task in the left panel. The panel groups map one-to-one onto the paper's recommendations R1–R5; R6, on performance measures and Fitts' law analysis, is covered by the Results and Report tabs.
-4. Check the **Geometry** tab: realized amplitude, movement directions, condition table, trial budget.
+4. Check the **Geometry** tab: realized amplitude, movement directions, ID coverage, condition table, trial budget.
 5. Run a pilot on the **Run** tab, inspect **Results**, then take the **Report** tab into your Methods section and download the files from **Export**.
 
 ## What you can configure
@@ -27,7 +27,7 @@ It is deliberately not a standardisation device. Defaults are defaults; the tool
 | **R2** Difficulty, size & units | Amplitude and width lists, reporting unit (px / mm / cm / m / deg), display calibration and viewing distance |
 | **R3** Target geometry | 2D plane (circle, square) or 3D spheres, target-plane depth |
 | **R4** Count, sequence & trials | Visible targets N, sequence step *s*, amplitude compensation, repetitions, practice selections dropped, condition order, error handling |
-| **R5** Feedback | Active-target cue, hover/contact highlight, visual and audio feedback for success and failure |
+| **R5** Feedback | Active-target cue, hover/contact highlight, visual and audio feedback for success and failure, outcome feedback duration |
 | Optional | Mirrored clockwise/counter-clockwise sequences, fixed / counterbalanced / randomised angular phase |
 | **R6** Measures & analysis | Not configured — movement time, error rate, throughput, the MT–ID regression, and effective measures are computed and reported together on the Results and Report tabs |
 
@@ -36,6 +36,7 @@ It is deliberately not a standardisation device. Defaults are defaults; the tool
 - **Realized amplitude.** A transition advancing by *s* of N targets has chord length `2R·sin(πs/N)`, not the circle diameter; for the near-opposite step with odd N this is `cos(π/2N) × diameter`. The tool reports the realized value and can rescale the circle so that it equals your nominal A.
 - **Sequences that do not visit every target.** If `gcd(s, N) ≠ 1` the sequence closes early and revisits targets. The tool warns, and in automatic mode picks the coprime *s* closest to N/2. With even N, `s = N/2` is the only exactly diametric transition but oscillates between two targets, so the tool steps to the nearest coprime value instead.
 - **Directional coverage.** A polar plot of the movement directions a configuration realises, with the exact gain and trial cost of mirroring the sequence or rotating the layout.
+- **Difficulty coverage.** A 1-bit-per-bin strip showing which difficulties the conditions sample, against the 2–5 bit band that carries the largest comparison base in the reviewed literature. The tool also warns when the ID span is too narrow to determine the MT–ID slope and intercept, and when distinct A–W pairs collapse onto the same ID.
 - **Trial budget.** Analysed movements per condition, with a warning when the endpoint sample is too small for a stable effective-width estimate.
 - **Fit.** The pilot is blocked rather than silently rescaled if the largest condition does not fit the window.
 
@@ -51,7 +52,7 @@ Pixels are disabled in 3D, since a pixel does not define a size in a scene.
 
 All exports are generated in the browser. Every file carries the same 7-character `config_id`, so a reviewer can tell which specification, which trials, and which report belong together.
 
-**`mdtt_config_*.json`** — the complete specification: `study`, `apparatus`, `task_space`, `display`, `reporting_unit`, `difficulty.conditions[]` (A, W, and ID in the reporting unit plus px, mm, degrees, and — in 3D — the angular ID), `geometry` (targets, shape, step, chord/diameter ratio, sequence rule, directions, phase, realized movement directions), `procedure`, `feedback`, and `analysis`. Reload it later with **Load config…** to reconstruct the task.
+**`mdtt_config_*.json`** — the complete specification: `reference_procedure`, `study`, `apparatus`, `task_space`, `display`, `reporting_unit`, `difficulty` (the ID formulation, the MT model, and `conditions[]` with A, W, and ID in the reporting unit plus px, mm, degrees, and — in 3D — the angular ID), `geometry` (targets, shape, step, chord/diameter ratio, sequence rule, directions, phase, realized movement directions), `procedure`, `feedback`, and `analysis`. Reload it later with **Load config…** to reconstruct the task.
 
 **`mdtt_trials_*.csv`** — one row per target-to-target movement:
 
@@ -72,7 +73,7 @@ All exports are generated in the browser. Every file carries the same 7-characte
 
 ## How the measures are computed
 
-- **Movement time** runs from the terminal selection of the preceding movement to the first selection of the current one.
+- **Movement time** runs from the terminal selection of the preceding movement to the first selection of the current one. The next target is cued at the moment of selection, so visual outcome feedback — a transient marker on the target just selected, for the duration set in R5 — never delays a movement or enters its movement time.
 - **Endpoint**: the *first* selection of every movement enters the distribution, hit or miss. Discarding misses would bias the endpoint spread that effective width is meant to capture.
 - **Effective width** `We = 4.133 · SD(dx)`, where `dx` is the endpoint deviation projected onto the movement axis; **effective amplitude** `Ae = mean(a + dx)`; **effective difficulty** `IDe = log2(Ae/We + 1)`; **throughput** `TP = IDe / MT`, computed per condition.
 - **Model fit**: MT regressed on ID, with intercept, slope and R² shown alongside throughput.
@@ -83,7 +84,7 @@ Pilot values produced here come from a single session and are meant to verify th
 
 ## Privacy
 
-The tool runs entirely client-side. There is no server, no analytics, and no network request of any kind: configurations and trial data stay in the browser tab until you download them. This is usually the relevant fact for an ethics application.
+The tool runs entirely client-side. There is no server, no analytics, no external scripts or fonts, and no network request of any kind: configurations and trial data stay in the browser tab until you download them. This is usually the relevant fact for an ethics application.
 
 ## Repository layout
 

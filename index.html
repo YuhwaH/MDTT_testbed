@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MDTT Testbed — configurable multi-directional tapping task</title>
+<meta name="description" content="Configurable browser-based Multi-Directional Tapping Task (ISO/TS 9241-411 Annex B.6.2.2). Companion tool for &quot;Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed&quot;.">
+<!-- Single self-contained file: no build step, no external scripts, fonts, or network requests.
+     Typography: one system sans for the interface, one monospace for numbers and identifiers. -->
 
-
-<style type="text/css">@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:400;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/cyrillic/400/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:400;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/latin-ext/400/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:400;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/cyrillic-ext/400/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:400;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/vietnamese/400/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:400;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/latin/400/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/cyrillic-ext/500/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/latin-ext/500/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/cyrillic/500/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/vietnamese/500/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/latin/500/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/cyrillic-ext/600/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/vietnamese/600/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/latin/600/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/cyrillic/600/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'IBM Plex Mono';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-mono/5.2.7/latin-ext/600/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/vietnamese/500/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/latin/500/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/latin-ext/500/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:500;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/cyrillic-ext/500/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/cyrillic-ext/600/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/vietnamese/600/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/latin/600/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:600;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/latin-ext/600/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:700;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/cyrillic-ext/700/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:700;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/latin/700/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:700;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/latin-ext/700/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:700;src:url(/cf-fonts/s/ibm-plex-sans-condensed/5.2.8/vietnamese/700/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:400;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:400;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:400;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:400;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:400;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:400;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:500;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:500;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:500;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:500;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:500;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:500;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:600;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:600;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:600;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:600;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:600;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:'IBM Plex Sans';font-style:normal;font-weight:600;src:url(/cf-fonts/v/ibm-plex-sans/5.2.8/greek/wght/normal.woff2);unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;font-display:swap;}</style>
 <style>
 :root{
   --paper:#e7ecf0;
@@ -21,30 +22,42 @@
   --signal:#d98216;
   --measure:#2f7d5d;
   --error:#bf3b30;
-  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,sans-serif;
-  --cond:'IBM Plex Sans Condensed','IBM Plex Sans',system-ui,sans-serif;
-  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* Two families only: one UI sans, one monospace reserved for numbers and identifiers.
+     System stacks, so the file stays self-contained and renders identically offline. */
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;font-family:var(--sans);color:var(--ink);background:var(--paper);
-  font-size:14px;line-height:1.5;
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   background-image:linear-gradient(var(--rule-soft) 1px,transparent 1px),linear-gradient(90deg,var(--rule-soft) 1px,transparent 1px);
   background-size:24px 24px;
 }
-h1,h2,h3,h4{font-family:var(--cond);margin:0;letter-spacing:.01em}
+h1,h2,h3,h4{font-family:var(--sans);font-weight:600;margin:0;letter-spacing:.01em}
 button,input,select,textarea{font:inherit;color:inherit}
 
 /* ---------- shell ---------- */
 .masthead{
   border-bottom:1px solid var(--rule);background:var(--panel);
-  padding:14px 22px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+  padding:0 22px;min-height:54px;display:flex;align-items:center;gap:14px;
 }
-.masthead h1{font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.masthead .sub{font-family:var(--mono);font-size:11.5px;color:var(--graphite)}
-.masthead .spacer{flex:1}
-.masthead .cite{font-size:11.5px;color:var(--graphite);max-width:46ch}
+.masthead h1{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.masthead .sub{
+  font-family:var(--mono);font-size:11px;color:var(--graphite);white-space:nowrap;
+  border-left:1px solid var(--rule-soft);padding-left:14px;
+}
+.masthead .spacer{flex:0 0 4px}
+.masthead .cite{
+  flex:1 1 auto;min-width:0;font-size:10.5px;line-height:1.45;color:var(--graphite);
+  text-align:right;max-height:2.9em;overflow:hidden;
+}
+@media(max-width:900px){
+  .masthead{padding:10px 16px;flex-wrap:wrap;gap:8px 12px}
+  .masthead .cite{flex:1 1 100%;text-align:left;max-height:none}
+  .masthead .spacer{display:none}
+}
 
 .shell{display:grid;grid-template-columns:376px minmax(0,1fr);gap:0;align-items:start}
 .rail{
@@ -57,7 +70,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .group{border-bottom:1px solid var(--rule-soft)}
 .group>summary{
   list-style:none;cursor:pointer;padding:11px 16px;display:flex;gap:10px;align-items:baseline;
-  font-family:var(--cond);font-weight:600;font-size:13.5px;text-transform:uppercase;letter-spacing:.05em;
+  font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;
   background:var(--panel-2);
 }
 .group>summary::-webkit-details-marker{display:none}
@@ -68,15 +81,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 }
 .group .rid.opt{background:var(--graphite)}
 .group-body{padding:12px 16px 16px}
+.rec{
+  font-size:11px;line-height:1.45;color:var(--accent-dk);margin:0 0 11px;
+  border-left:2px solid var(--accent);padding-left:8px;
+}
 .field{margin-bottom:11px}
 .field:last-child{margin-bottom:0}
-label.lbl{display:block;font-size:11.5px;font-weight:600;color:var(--graphite);margin-bottom:3px;letter-spacing:.02em}
+label.lbl{display:block;font-size:11px;font-weight:600;color:var(--graphite);margin-bottom:3px;letter-spacing:.01em}
 .hint{font-size:11px;color:var(--graphite);margin-top:4px;line-height:1.4}
 input[type=text],input[type=number],select,textarea{
   width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:3px;background:#fff;
-  font-family:var(--mono);font-size:12.5px;
+  font-family:var(--sans);font-size:12.5px;
 }
-textarea{font-family:var(--sans);font-size:12.5px;resize:vertical}
+input[type=number],#amps,#wids{font-family:var(--mono);font-variant-numeric:tabular-nums}
+textarea{resize:vertical}
 input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .row{display:flex;gap:8px}
 .row>*{flex:1;min-width:0}
@@ -84,8 +102,8 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid v
 .check input{margin-top:2px}
 .seg{display:flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden}
 .seg button{
-  flex:1;background:#fff;border:0;padding:6px 4px;font-size:12px;cursor:pointer;color:var(--graphite);
-  border-right:1px solid var(--rule-soft);font-family:var(--cond);font-weight:600;letter-spacing:.02em;
+  flex:1;background:#fff;border:0;padding:6px 5px;font-size:12px;cursor:pointer;color:var(--graphite);
+  border-right:1px solid var(--rule-soft);font-weight:600;letter-spacing:.01em;
 }
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed=true]{background:var(--accent);color:#fff}
@@ -94,7 +112,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid v
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--rule);margin-bottom:18px}
 .tabs button{
   background:transparent;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;
-  font-family:var(--cond);font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--graphite);
+  font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--graphite);
 }
 .tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--signal)}
 .pane{display:none}
@@ -103,7 +121,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid v
 /* ---------- cards ---------- */
 .card{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px;margin-bottom:16px}
 .card>h3{
-  font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--graphite);
+  font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--graphite);
   margin-bottom:12px;display:flex;gap:8px;align-items:baseline;
 }
 .card>h3 .num{font-family:var(--mono);color:var(--signal)}
@@ -115,18 +133,33 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid v
 @media(max-width:640px){.readout{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .readout div{background:var(--panel);padding:8px 10px}
 .readout .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--graphite)}
-.readout .v{font-family:var(--mono);font-size:16px;font-weight:500;margin-top:2px}
+.readout .v{font-family:var(--mono);font-size:15.5px;font-weight:500;margin-top:2px;font-variant-numeric:tabular-nums}
 .readout .v small{font-size:11px;color:var(--graphite);font-weight:400}
 
-table{border-collapse:collapse;width:100%;font-size:12.5px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
 th,td{border-bottom:1px solid var(--rule-soft);padding:5px 7px;text-align:right}
 th:first-child,td:first-child{text-align:left}
-th{font-family:var(--cond);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--graphite);border-bottom:1px solid var(--rule)}
+th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--graphite);border-bottom:1px solid var(--rule)}
 td.num,td .num{font-family:var(--mono)}
 tbody tr:hover{background:var(--panel-2)}
 #checkTable th:nth-child(2),#checkTable td:nth-child(2){text-align:left}
 #checkTable td:nth-child(3){color:var(--graphite)}
 .tablewrap{overflow-x:auto}
+#view3dBar{display:none;flex-wrap:wrap;gap:8px 10px;align-items:center;margin-top:9px}
+#view3dBar .check{font-size:12px;gap:6px;align-items:center}
+.hint.mono{font-family:var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+.idbar{display:flex;gap:2px;margin-top:10px}
+.idbar div{
+  flex:1;text-align:center;font-family:var(--mono);font-size:10px;color:var(--graphite);
+  padding:4px 0;border:1px solid var(--rule-soft);border-radius:2px;background:#fff;
+}
+.idbar div.base{background:var(--panel-2);box-shadow:inset 0 -3px 0 var(--signal)}
+.idbar div.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#checkTable td.grp{
+  font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--graphite);background:var(--panel-2);padding-top:8px;
+}
+#checkCount{margin-left:auto;font-family:var(--mono);text-transform:none;letter-spacing:0}
 
 .flag{
   border-left:3px solid var(--signal);background:#fdf6ec;padding:8px 11px;font-size:12.5px;margin-top:10px;border-radius:0 3px 3px 0;
@@ -137,7 +170,7 @@ tbody tr:hover{background:var(--panel-2)}
 
 .btn{
   background:var(--accent);color:#fff;border:0;border-radius:3px;padding:9px 16px;cursor:pointer;
-  font-family:var(--cond);font-weight:600;font-size:13.5px;text-transform:uppercase;letter-spacing:.05em;
+  font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;
 }
 .btn:hover{background:var(--accent-dk)}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--rule)}
@@ -167,11 +200,11 @@ pre.out{
   background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 26px;
 }
 #stageMsg:empty{display:none}
-#stageMsg h2{font-size:17px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+#stageMsg h2{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 #stageMsg p{font-size:13px;color:var(--graphite);margin:0 0 14px}
 .hidden{display:none!important}
 @media(prefers-reduced-motion:no-preference){
-  .flash{transition:fill .12s linear,stroke .12s linear}
+
 }
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -179,20 +212,20 @@ pre.out{
 .sheet{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:28px 32px}
 .sheet-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;
   border-bottom:2px solid var(--ink);padding-bottom:10px}
-.sheet-head h2{font-size:18px;text-transform:uppercase;letter-spacing:.07em}
+.sheet-head h2{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .sheet-head .stamp{font-family:var(--mono);font-size:11px;color:var(--graphite);text-align:right}
 .sheet section{margin-top:18px}
 .sheet section>h4{
-  font-family:var(--cond);font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);
   border-bottom:1px solid var(--rule-soft);padding-bottom:4px;margin-bottom:9px;
 }
 .sheet section>h4 .r{color:var(--graphite);font-weight:500}
-dl.kv{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr);gap:5px 16px;margin:0;font-size:12.6px}
+dl.kv{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr);gap:5px 16px;margin:0;font-size:12.5px}
 dl.kv dt{color:var(--graphite)}
-dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word}
-.sheet .todo{margin:0;padding-left:18px;font-size:12.8px}
+dl.kv dd{margin:0;font-size:12.5px;word-break:break-word;font-variant-numeric:tabular-nums}
+.sheet .todo{margin:0;padding-left:18px;font-size:12.5px}
 .sheet .todo li{margin-bottom:3px}
-.sheet .prose p{font-size:12.8px;line-height:1.6;margin:0 0 8px}
+.sheet .prose p{font-size:12.5px;line-height:1.6;margin:0 0 8px}
 .stampline{font-family:var(--mono);font-size:11px;color:var(--measure)}
 @media print{
   body *{visibility:hidden}
@@ -209,9 +242,9 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
 
 <header class="masthead">
   <h1>MDTT Testbed</h1>
-  <span class="sub">configurable multi-directional tapping task · v1.0</span>
+  <span class="sub">ISO/TS 9241-411 B.6.2.2</span>
   <span class="spacer"></span>
-  <span class="cite">Companion tool for “Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed”. Configuration panels map to recommendations R1–R5; R6 (performance measures and Fitts' law analysis) is covered by the Results and Report tabs.</span>
+  <span class="cite">Companion tool for “Designing and Reporting Multi-Directional Tapping Tasks: A Systematic Review, Practical Guidelines, and a Configurable Testbed”. Panels R1–R5 configure the task; R6 is covered by the Results and Report tabs.</span>
 </header>
 
 <div class="shell">
@@ -222,6 +255,7 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
   <details class="group" open>
     <summary><span class="rid">R1</span> Apparatus &amp; mapping</summary>
     <div class="group-body">
+      <p class="rec"><b>R1</b> Report the interaction apparatus and mapping, rather than only the device name.</p>
       <div class="row field">
         <div><label class="lbl" for="inKind">Input</label>
           <select id="inKind">
@@ -241,13 +275,14 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
         <textarea id="mapping" rows="2" placeholder="e.g. system pointer, acceleration off, gain 1.0 — or: ray from controller origin, hit = ray/target intersection"></textarea></div>
       <div class="field"><label class="lbl" for="trigger">Selection trigger &amp; hit definition</label>
         <input type="text" id="trigger" placeholder="e.g. left button press; hit = cursor hotspot inside target"></div>
-      <p class="hint">This tool runs a pointer-based task in the browser. For XR, use these fields to document the chain you implement on your own platform — the exported spec stays valid.</p>
+      <p class="hint">The same device can implement direct touch, ray casting, hand, head or gaze selection, so the device name alone does not say what movement was measured. This tool runs a pointer-based task in the browser; for XR, document the chain you implement on your own platform — the exported spec stays valid.</p>
     </div>
   </details>
 
   <details class="group" open>
     <summary><span class="rid">R2</span> Difficulty, size &amp; units</summary>
     <div class="group-body">
+      <p class="rec"><b>R2</b> Use a range of difficulties and report the A, W, ID, and units that define them.</p>
       <div class="field"><label class="lbl">Reporting unit</label>
         <div class="seg" id="unitSeg" role="group">
           <button data-u="px" aria-pressed="true">px</button>
@@ -266,13 +301,14 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
           <div><input type="number" id="scrMm" value="530" min="20" step="1" aria-label="Screen width in millimetres"><div class="hint">screen width, mm</div></div>
           <div><input type="number" id="viewMm" value="600" min="50" step="10" aria-label="Viewing distance in millimetres"><div class="hint">viewing dist., mm</div></div>
         </div></div>
-      <p class="hint">All conditions are exported in px, mm and degrees of visual angle at once, so a pixel-only specification never leaves the tool.</p>
+      <p class="hint">Pixels alone do not fix physical or visual extent, so every condition is exported in px, mm and degrees at once.</p>
     </div>
   </details>
 
   <details class="group" open>
     <summary><span class="rid">R3</span> Target geometry</summary>
     <div class="group-body">
+      <p class="rec"><b>R3</b> Prefer direction-invariant targets for general comparison, and define width explicitly for other shapes.</p>
       <div class="field"><label class="lbl">Task space</label>
         <div class="seg" id="dimSeg" role="group">
           <button data-d="2d" aria-pressed="true">2D plane</button>
@@ -286,21 +322,24 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
       <div class="field hidden" id="depthField">
         <label class="lbl" for="depthMm">Target-plane depth from the eye (mm)</label>
         <input type="number" id="depthMm" value="1000" min="100" step="50">
-        <div class="hint">Spheres sit on a fronto-parallel circle at this depth. Depth drives every visual-angle figure: the same physical W subtends a different angle when you move the plane.</div>
+        <div class="hint">Spheres sit on a fronto-parallel circle at this depth. θ = 2·arctan(W / 2z), so a fixed physical width shrinks visually as depth grows — report size, depth and angle together.</div>
       </div>
       <div id="shapeFlag"></div>
+      <p class="hint">Circles and spheres keep W constant across approach directions — the default for general comparison. Shape is not cosmetic: it can change measured movement time.</p>
     </div>
   </details>
 
   <details class="group" open>
     <summary><span class="rid">R4</span> Count, sequence &amp; trials</summary>
     <div class="group-body">
+      <p class="rec"><b>R4</b> Treat target count, sequence, and analysed movements as part of the task definition.</p>
       <div class="row field">
         <div><label class="lbl" for="nTargets">Visible targets N</label>
           <input type="number" id="nTargets" value="13" min="4" max="41" step="1"></div>
         <div><label class="lbl" for="reps">Repetitions / condition</label>
           <input type="number" id="reps" value="2" min="1" max="20" step="1"></div>
       </div>
+      <p class="hint" style="margin:-4px 0 11px">Reported counts run 5–36, most often 13 or 9, and count affects throughput. What defines the task is the count, the sequence rule <i>and</i> the movements actually analysed.</p>
       <div class="field"><label class="lbl" for="stepMode">Sequence step s (targets advanced per movement)</label>
         <div class="row">
           <select id="stepMode">
@@ -330,6 +369,7 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
   <details class="group" open>
     <summary><span class="rid">R5</span> Feedback</summary>
     <div class="group-body">
+      <p class="rec"><b>R5</b> Specify feedback states explicitly and keep non-manipulated feedback consistent.</p>
       <div class="field"><label class="lbl" for="activeCue">Active-target cue <span style="font-weight:400">(required by ISO)</span></label>
         <select id="activeCue"><option value="fill">Filled highlight</option><option value="outline">Outline only</option><option value="both">Fill + outline</option></select></div>
       <div class="check"><input type="checkbox" id="fbHover"><label for="fbHover">Hover / contact highlight on the active target</label></div>
@@ -337,7 +377,10 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
       <div class="check"><input type="checkbox" id="fbSucA"><label for="fbSucA">Audio success feedback</label></div>
       <div class="check"><input type="checkbox" id="fbFailV" checked><label for="fbFailV">Visual failure feedback</label></div>
       <div class="check"><input type="checkbox" id="fbFailA" checked><label for="fbFailA">Audio failure feedback</label></div>
-      <p class="hint">Hover and error highlighting measurably shift throughput and error rate — hold them constant unless feedback is your independent variable.</p>
+      <div class="field" style="margin-top:9px"><label class="lbl" for="fbDur">Outcome feedback duration (ms)</label>
+        <input type="number" id="fbDur" value="70" min="0" max="300" step="10">
+        <div class="hint">A coloured outline on the target just selected; 0 turns the marker off. The next target is cued at the moment of selection, so the marker never delays a movement or enters its movement time.</div></div>
+      <p class="hint">Hover and error highlighting measurably shift throughput and error rate — hold every state constant unless feedback is your independent variable, and describe all of them.</p>
     </div>
   </details>
 
@@ -389,9 +432,13 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
         <div class="card">
           <h3><span class="num">01</span> Layout &amp; realized transitions</h3>
           <div id="previewWrap"></div>
-          <div id="view3dBar" class="hidden" style="gap:10px;align-items:center;margin-top:9px">
+          <div id="view3dBar" class="hidden">
             <button class="btn ghost" id="frontViewBtn" style="padding:5px 12px;font-size:11.5px">Front view</button>
-            <span class="hint" id="orbitReadout" style="margin:0"></span>
+            <button class="btn ghost" id="homeDepthBtn" style="padding:5px 12px;font-size:11.5px">Reset depth</button>
+            <span class="hint mono" id="depthReadout" style="margin:0"></span>
+            <label class="check" id="holdAngleWrap" style="margin:0;white-space:nowrap">
+              <input type="checkbox" id="holdAngle"><span>Hold visual angle</span></label>
+            <span class="hint" id="orbitReadout" style="margin:0;flex:1 1 100%"></span>
           </div>
           <div class="hint" id="previewHint" style="margin-top:8px"></div>
         </div>
@@ -410,7 +457,8 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
         <div class="card">
           <h3><span class="num">04</span> Conditions</h3>
           <div class="tablewrap"><table id="condTable"></table></div>
-          <div class="hint" style="margin-top:8px">ID uses the Shannon formulation, ID = log₂(A/W + 1), computed from the <b>realized</b> amplitude.</div>
+          <div class="idbar" id="idBar"></div>
+          <div class="hint" style="margin-top:6px">Shannon ID = log₂(A′/W + 1), from the <b>realized</b> amplitude A′. Filled bins hold your conditions; the shaded 2–5 bit band is the largest comparison base in the reviewed literature.</div>
         </div>
         <div class="card">
           <h3><span class="num">05</span> Trial budget</h3>
@@ -435,7 +483,7 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
     </div>
     <div class="card">
       <h3><span class="num">07</span> What gets recorded</h3>
-      <p style="margin:0;font-size:13px">One row per target-to-target movement: condition, sequence and movement index, direction and phase, the from-point (previous selection point), target centre, first-click endpoint, movement time, hit/miss, attempts, and the practice flag. Effective measures are computed from the <b>first click</b> of every movement, so misses stay in the endpoint distribution as Fitts’ law methodology requires.</p>
+      <p style="margin:0;font-size:13px">The next target is cued at the moment of selection, so outcome feedback never delays a movement or enters its movement time. One row per target-to-target movement: condition, sequence and movement index, direction and phase, the from-point (previous selection point), target centre, first-click endpoint, movement time, hit/miss, attempts, and the practice flag. Effective measures are computed from the <b>first click</b> of every movement, so misses stay in the endpoint distribution as Fitts’ law methodology requires.</p>
     </div>
   </section>
 
@@ -443,6 +491,7 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
   <section class="pane" id="p-res">
     <div class="card">
       <h3><span class="num">08</span> Per-condition performance <span style="color:var(--accent)">· R6</span></h3>
+      <p class="rec" style="margin:-4px 0 12px"><b>R6</b> Report complementary performance measures and identify the Fitts' law analyses applied — they answer different questions and are not interchangeable.</p>
       <div class="tablewrap"><table id="resTable"></table></div>
       <div id="resFlags"></div>
     </div>
@@ -455,7 +504,7 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
       <div class="card">
         <h3><span class="num">10</span> Endpoint spread</h3>
         <div id="epWrap"></div>
-        <div class="hint" style="margin-top:8px">Selection endpoints projected onto each movement axis, pooled per condition. Wₑ = 4.133·SD<sub>x</sub>.</div>
+        <div class="hint" style="margin-top:8px">Selection endpoints projected onto each movement axis, pooled per condition. Wₑ = 4.133·SD<sub>x</sub> — ±2.066 SD, about 96% of the endpoint distribution.</div>
       </div>
     </div>
   </section>
@@ -495,7 +544,7 @@ dl.kv dd{margin:0;font-family:var(--mono);font-size:12.2px;word-break:break-word
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="copyMethods">Copy text</button></div>
     </div>
     <div class="card">
-      <h3><span class="num">13</span> Reporting checklist coverage</h3>
+      <h3><span class="num">13</span> Planning &amp; reporting checklist <span id="checkCount"></span></h3>
       <div class="tablewrap"><table id="checkTable"></table></div>
       <div class="hint" style="margin-top:8px">Items the tool cannot know — participants, posture, apparatus photographs, analysis code — stay with you.</div>
     </div>
@@ -524,6 +573,9 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const fmt=(v,d=2)=>(v===null||v===undefined||!isFinite(v))?"—":Number(v).toFixed(d);
 const gcd=(a,b)=>b?gcd(b,a%b):a;
 const TAU=Math.PI*2;
+// mirrors --sans / --mono so SVG labels match the surrounding interface
+const FSANS="system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif";
+const FMONO="ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace";
 
 /* ---------------- configuration state ---------------- */
 const C={
@@ -535,8 +587,18 @@ const C={
   shape:"circle", dim:"2d", depthMm:1000,
   n:13, stepMode:"auto", step:6, compensate:false,
   reps:2, practice:1, order:"random", errMode:"advance",
-  fb:{activeCue:"fill",hover:false,sucV:true,sucA:false,failV:true,failA:true},
+  fb:{activeCue:"fill",hover:false,sucV:true,sucA:false,failV:true,failA:true,durMs:70},
   adv:{mirror:false,phaseMode:"fixed",phaseDeg:0,phaseK:2}
+};
+
+/* --------- the paper's six recommendations, verbatim ---------- */
+const REC={
+  R1:"Report the interaction apparatus and mapping, rather than only the device name.",
+  R2:"Use a range of difficulties and report the A, W, ID, and units that define them.",
+  R3:"Prefer direction-invariant targets for general comparison, and define width explicitly for other shapes.",
+  R4:"Treat target count, sequence, and analysed movements as part of the task definition.",
+  R5:"Specify feedback states explicitly and keep non-manipulated feedback consistent.",
+  R6:"Report complementary performance measures and identify the Fitts' law analyses applied."
 };
 
 /* ---------------- units ---------------- */
@@ -597,6 +659,11 @@ function movementDirections(phaseDeg,dirs){
   }
   return out;
 }
+function dupIDs(){
+  const m={};
+  conditions().forEach(c=>{const k=c.ID.toFixed(2);(m[k]=m[k]||[]).push(c.id);});
+  return Object.values(m).filter(g=>g.length>1).map(g=>g.join(" = "));
+}
 function conditions(){
   const list=[];
   for(const A of C.amps) for(const W of C.wids){
@@ -645,7 +712,7 @@ function sphereDefs(pfx){
 }
 
 /* ---------------- 3D view ---------------- */
-const V3={yaw:24,pitch:-15,drag:null};
+const V3={yaw:24,pitch:-15,drag:null,fov:0,sig:"",keepFov:false,home:1000,holdAngle:false};
 function rot3(p,yaw,pitch){
   const cy=Math.cos(yaw),sy=Math.sin(yaw);
   const x1=p.x*cy+p.z*sy, z1=-p.x*sy+p.z*cy;
@@ -669,8 +736,13 @@ function render3D(){
     const r=k/120*TAU;
     ring.push(proj3(rot3({x:R*Math.cos(r),y:R*Math.sin(r),z:0},yaw,pit),dPx));
   }
-  const ext=Math.max(1,...P.map(q=>Math.hypot(q.x,q.y)+W/2*q.s),...ring.map(q=>Math.hypot(q.x,q.y)));
-  const F=(S/2-26)/ext;
+  // The preview holds a fixed field of view. It is refitted when the task geometry changes,
+  // but never when only depth changes — so moving the plane away really does make the
+  // targets smaller on screen, exactly as the visual-angle figures say it should.
+  const FIT=S/2-30, sig=JSON.stringify([C.amps,C.wids,C.n,C.unit,C.compensate,C.stepMode,C.step]);
+  if(!isFinite(V3.fov)||!V3.fov||(V3.sig!==sig&&!V3.keepFov)) V3.fov=Math.max(1e-4,(R+W/2)/dPx);
+  V3.sig=sig; V3.keepFov=false;
+  const F=FIT/V3.fov/dPx;
   const X=q=>cx+q.x*F, Y=q=>cy+q.y*F, rad=q=>Math.max(1.6,W/2*q.s*F);
   const g=svg("svg",{viewBox:`0 0 ${S} ${S}`,width:"100%",
     style:"max-width:460px;display:block;margin:auto;cursor:grab;touch-action:none"});
@@ -690,15 +762,49 @@ function render3D(){
   });
   const A2=realizedPx(ref.Apx);
   const lab=svg("text",{x:cx,y:S-7,"text-anchor":"middle","font-size":10.5,
-    "font-family":"IBM Plex Mono, monospace",fill:"#2f7d5d"});
-  lab.textContent=`A′ ${fmt(fromPx(A2),1)} ${U()} = ${fmt(px2deg(A2),2)}° · W ${fmt(px2deg(ref.Wpx),2)}° at ${fmt(C.depthMm,0)} mm`;
+    "font-family":FMONO,fill:"#2f7d5d"});
+  const over=(R+W/2)/dPx>V3.fov*1.02;
+  lab.textContent=`A′ ${fmt(fromPx(A2),1)} ${U()} = ${fmt(px2deg(A2),2)}° · W ${fmt(px2deg(ref.Wpx),2)}° at ${fmt(C.depthMm,0)} mm`
+    +(over?"  ·  larger than the preview field of view":"");
   g.appendChild(lab);
   const wrap=$("#previewWrap"); wrap.innerHTML=""; wrap.appendChild(g);
 }
 function normDeg(d){ let x=d%360; if(x>180)x-=360; if(x<-180)x+=360; return x; }
 function updateOrbit(){
   if(!is3D())return;
-  $("#orbitReadout").innerHTML=`yaw ${fmt(normDeg(V3.yaw),0)}° · pitch ${fmt(V3.pitch,0)}° — inspection only. Every reported figure uses the frontal view.`;
+  $("#orbitReadout").innerHTML=`yaw ${fmt(normDeg(V3.yaw),0)}° · pitch ${fmt(V3.pitch,0)}° — orbit and depth are inspection controls; every reported figure uses the frontal view at the stated depth.`;
+}
+const angularUnit=()=>C.unit==="deg";     // an angular specification already fixes the visual angle
+function syncDepthUI(){
+  if(!$("#depthReadout"))return;
+  $("#depthMm").value=C.depthMm;
+  $("#depthReadout").innerHTML=`${fmt(C.depthMm,0)} mm`+(Math.abs(C.depthMm-V3.home)>1?` <span style="opacity:.6">(home ${fmt(V3.home,0)})</span>`:"");
+  const cb=$("#holdAngle");
+  cb.checked=V3.holdAngle||angularUnit();
+  cb.disabled=angularUnit();
+  $("#holdAngleWrap").title=angularUnit()
+    ? "A and W are specified in degrees, so the visual angle is already fixed and physical size follows depth"
+    : "Rescale A and W with depth so the targets keep the same visual angle — the physical size then grows with depth";
+  $("#holdAngleWrap").style.opacity=angularUnit()?.55:1;
+}
+const trimNum=v=>+v.toPrecision(6);
+// Live depth changes redraw the scene immediately; the tables, spec and report
+// follow once the gesture settles, so scrubbing stays smooth.
+let depthSettle=null;
+function setDepth(mm){
+  const prev=C.depthMm;
+  C.depthMm=clamp(Math.round(mm),100,20000);
+  if(V3.holdAngle&&!angularUnit()&&prev>0&&C.depthMm!==prev){
+    const k=C.depthMm/prev;                 // constant visual angle ⇒ physical size scales with depth
+    C.amps=C.amps.map(v=>trimNum(v*k));
+    C.wids=C.wids.map(v=>trimNum(v*k));
+    $("#amps").value=C.amps.map(v=>fmt(v,v<10?3:1)).join(", ");
+    $("#wids").value=C.wids.map(v=>fmt(v,v<10?3:1)).join(", ");
+  }
+  V3.keepFov=true;                          // a depth move never refits the view, hold-angle rescale included
+  syncDepthUI(); render3D(); updateOrbit();
+  clearTimeout(depthSettle);
+  depthSettle=setTimeout(renderAll,130);
 }
 
 /* ---------------- preview ---------------- */
@@ -719,13 +825,13 @@ function renderPreview(){
   pts.forEach((p,i)=>{
     const act=i===o[0];
     g.appendChild(shapeNode(C.shape,p.x,p.y,W,{fill:act?"#d98216":"#dfe6eb",stroke:act?"#a35f0a":"#b3c1cb","stroke-width":1}));
-    const t=svg("text",{x:p.x,y:p.y+3.4,"text-anchor":"middle","font-size":9.5,"font-family":"IBM Plex Mono, monospace",fill:act?"#fff":"#5b6b78"});
+    const t=svg("text",{x:p.x,y:p.y+3.4,"text-anchor":"middle","font-size":9.5,"font-family":FMONO,fill:act?"#fff":"#5b6b78"});
     t.textContent=o.indexOf(i)===0?"1":String(o.indexOf(i)+1);
     g.appendChild(t);
   });
   // caliper on the first chord
   const a=pts[o[0]],b=pts[o[1]],mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
-  const lab=svg("text",{x:mx,y:my-7,"text-anchor":"middle","font-size":10.5,"font-family":"IBM Plex Mono, monospace",fill:"#2f7d5d"});
+  const lab=svg("text",{x:mx,y:my-7,"text-anchor":"middle","font-size":10.5,"font-family":FMONO,fill:"#2f7d5d"});
   lab.textContent=`A′ = ${fmt(fromPx(realizedPx(ref.Apx)),1)} ${U()}`;
   g.appendChild(svg("rect",{x:mx-56,y:my-19,width:112,height:15,fill:"#fff",opacity:.85,rx:2}));
   g.appendChild(lab);
@@ -784,10 +890,26 @@ function renderSummary(){
   if(C.compensate)
     flags.push(`<div class="flag ok"><b>Compensation on.</b> The layout circle is scaled to ${fmt(1/(2*cf),3)}·A in radius so that every movement is exactly A.</div>`);
   if(C.n%2===0&&C.stepMode==="auto")
-    flags.push(`<div class="flag"><b>Even N.</b> s = N/2 = ${C.n/2} is the only exactly diametric transition, but it revisits just two targets, so the tool uses s = ${s} instead — a chord of ${fmt(cf,3)} × the diameter. With odd N the near-opposite step gives cos(π/2N) × diameter and the question does not arise.</div>`);
+    flags.push(`<div class="flag"><b>Even N.</b> s = N/2 = ${C.n/2} is the only exactly diametric step but revisits two targets, so the tool uses s = ${s} — a chord of ${fmt(cf,3)} × the diameter.</div>`);
   if(C.practice>=C.n)
     flags.push(`<div class="flag err"><b>No movements left to analyse.</b> Practice drops ≥ N movements per sequence.</div>`);
+
+  // --- difficulty coverage (R2) ---
+  const idlo=Math.min(...IDs), idhi=Math.max(...IDs);
+  if(!IDs.some(v=>v>=2&&v<5))
+    flags.push(`<div class="flag"><b>No condition in the 2–5 bit band.</b> That band carries the largest comparison base in the literature — fine to leave, worth stating why.</div>`);
+  if(idhi-idlo<1.5)
+    flags.push(`<div class="flag"><b>Narrow difficulty range: ${fmt(idhi-idlo,2)} bits.</b> ISO asks for a range of difficulties; a short span leaves the MT–ID slope and intercept poorly determined.</div>`);
+  if(dupIDs().length)
+    flags.push(`<div class="flag"><b>Same ID from different A–W pairs:</b> ${dupIDs().join("; ")}. Report A and W, not ID alone.</div>`);
+
   $("#geoFlags").innerHTML=flags.join("");
+
+  // ID coverage strip: 1-bit bins, 2–5 shaded as the largest comparison base
+  $("#idBar").innerHTML=[[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8]].map(([lo,hi])=>{
+    const on=IDs.some(v=>v>=lo&&(v<hi||(hi===8&&v<=8)));
+    return `<div class="${[on?"on":"",lo>=2&&lo<5?"base":""].filter(Boolean).join(" ")}" title="${on?"sampled":"not sampled"}">${lo}–${hi}</div>`;
+  }).join("");
 
   // conditions table
   const mmCols=C.unit!=="mm";
@@ -821,19 +943,19 @@ function renderSummary(){
 
   const sflags=[];
   if(!is3D()&&C.shape==="square")
-    sflags.push(`<div class="flag"><b>Square targets: W depends on approach direction.</b> Under a projected-extent convention the width of a square of side <i>s</i> runs from <i>s</i> for an axis-aligned approach to <i>s</i>√2 at 45°, a spread of 41.4%. Projected extent is only one convention — line-intersection and endpoint-derived widths need not agree — so state explicitly how W is determined, or use circles for general comparison.</div>`);
+    sflags.push(`<div class="flag"><b>Square targets: W depends on approach direction</b> — from <i>s</i> axis-aligned to <i>s</i>√2 at 45°, a spread of 41.4%. State how W is determined, or use circles for general comparison.</div>`);
   if(is3D()){
     if(UNITSWITCHED)
-      sflags.push(`<div class="flag"><b>Units switched from px to mm.</b> Your amplitude and width numbers were kept, but they now mean physical millimetres in the scene, not screen pixels. Retype them if you meant a different physical size.</div>`);
+      sflags.push(`<div class="flag"><b>Units switched from px to mm.</b> The same numbers now mean millimetres in the scene — retype them if you meant a different physical size.</div>`);
     const dmax=Math.max(...conds.map(c=>Math.abs(c.IDang-c.ID)));
-    sflags.push(`<div class="flag ok"><b>Spheres keep W direction-invariant in 3D</b>, the volumetric counterpart of the circle — the default for general comparison.</div>`);
+    sflags.push(`<div class="flag ok"><b>Spheres keep W direction-invariant in 3D</b> — the volumetric counterpart of the circle.</div>`);
     const wmm=conds.map(c=>px2mm(c.Wpx)), ang=d=>wmm.map(v=>2*Math.atan(v/2/d)*180/Math.PI);
     const now=ang(C.depthMm), half=ang(C.depthMm/2);
-    sflags.push(`<div class="flag"><b>Depth is not recoverable from ID.</b> ID is a ratio, so the angular and metric versions agree to within ${fmt(dmax,2)} bits — but absolute angular size is not: W spans ${fmt(Math.min(...now),2)}–${fmt(Math.max(...now),2)}° at ${fmt(C.depthMm,0)} mm and would span ${fmt(Math.min(...half),2)}–${fmt(Math.max(...half),2)}° at half that depth, with a different reach as well. Report depth <i>and</i> visual angle: performance can shift with depth even when visual angle is held constant.</div>`);
+    sflags.push(`<div class="flag"><b>Depth is not recoverable from ID.</b> W spans ${fmt(Math.min(...now),2)}–${fmt(Math.max(...now),2)}° here, ${fmt(Math.min(...half),2)}–${fmt(Math.max(...half),2)}° at half the depth, while ID moves by at most ${fmt(dmax,2)} bits. Report depth <i>and</i> visual angle.</div>`);
   }
   $("#shapeFlag").innerHTML=sflags.join("");
   $("#previewHint").innerHTML = is3D()
-    ? `Drag inside the view to orbit the layout and inspect the spheres off-axis; <b>Front view</b> returns to the frontal (0°, 0°) viewpoint that all reported values assume. Sphere size shrinks with distance under perspective — the caliper line reports the frontal amplitude in both physical and angular terms.`
+    ? `Drag to orbit the layout; <b>scroll</b> over it to move the target plane nearer or further. The preview keeps a fixed field of view, so a fixed physical width really does shrink as depth grows. Tick <b>Hold visual angle</b> to rescale A and W with depth instead — the apparent size then stays put and the physical size grows, which is the trade-off the two conditions represent. <b>Front view</b> and <b>Reset depth</b> return to the frontal viewpoint and the home depth that all reported values assume.`
     : `Grey chords: every movement in one sequence. Amber: the first movement from the start target. The dashed circle is the layout circle; the caliper marks the realized chord.`;
   $("#stepFlag").innerHTML = C.stepMode==="auto"
     ? `<div class="hint">Auto-selected s = ${s} for N = ${C.n}; chord = ${fmt(cf,3)} × diameter.</div>` : "";
@@ -869,10 +991,12 @@ function bind(){
     C.dim=b.dataset.d;
     $$("#dimSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
     if(is3D()&&C.unit==="px"){ C.unit="mm"; UNITSWITCHED=true; }   // pixels do not define a size in a 3D task
+    if(is3D()) V3.home=C.depthMm;
     if(!is3D()) UNITSWITCHED=false;
     syncDimUI(); renderAll();
   }));
-  num("#depthMm",v=>C.depthMm=clamp(v||1000,100,20000));
+  num("#depthMm",v=>{C.depthMm=clamp(v||1000,100,20000);V3.home=C.depthMm;syncDepthUI();});
+  chk("#holdAngle",v=>{V3.holdAngle=v;syncDepthUI();});
   $$("#shapeSeg button").forEach(b=>b.addEventListener("click",()=>{
     C.shape=b.dataset.s; $$("#shapeSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderAll();
   }));
@@ -888,6 +1012,7 @@ function bind(){
   sel("#activeCue",v=>C.fb.activeCue=v);
   chk("#fbHover",v=>C.fb.hover=v); chk("#fbSucV",v=>C.fb.sucV=v); chk("#fbSucA",v=>C.fb.sucA=v);
   chk("#fbFailV",v=>C.fb.failV=v); chk("#fbFailA",v=>C.fb.failA=v);
+  num("#fbDur",v=>C.fb.durMs=clamp(Math.round(v)||0,0,300));
 
   chk("#advMirror",v=>C.adv.mirror=v);
   sel("#phaseMode",v=>{C.adv.phaseMode=v;$("#phaseK").disabled=v!=="counter";$("#phaseDeg").disabled=v==="random";});
@@ -904,7 +1029,10 @@ function renderAll(){ renderPreview(); renderRose(); renderSummary(); }
    TASK RUNNER
    ===================================================================== */
 let TR=[];                       // trial records
-const RUN={active:false,plan:[],si:0,o:[],pts:[],mi:0,t0:0,from:null,attempts:0,seqErr:0,W:0,cond:null,phase:0,dir:"cw",scale:1,locked:false,fbTimer:null};
+const RUN={active:false,plan:[],si:0,o:[],pts:[],mi:0,t0:0,from:null,attempts:0,seqErr:0,W:0,cond:null,phase:0,dir:"cw",scale:1,
+           locked:false,fb:null,fbTimer:null,gapTimer:null,lastClick:0};
+const fbMs=()=>clamp(isFinite(C.fb.durMs)?Math.round(C.fb.durMs):70,0,300);
+const CLICK_GUARD_MS=60;   // ignores a double-fire of the same press; too short to be a real selection
 let audio=null;
 function beep(freq,dur,type){
   try{
@@ -946,7 +1074,7 @@ function buildPlan(){
 }
 function startRun(){
   if(!fitCheck().ok)return;
-  RUN.plan=buildPlan(); RUN.si=0; RUN.active=true;
+  RUN.plan=buildPlan(); RUN.si=0; RUN.active=true; RUN.locked=false; RUN.lastClick=0; clearOutcome();
   $("#stage").classList.add("on");
   document.addEventListener("keydown",escHandler);
   $("#stageSvg").addEventListener("pointerdown",onClick);
@@ -956,7 +1084,7 @@ function startRun(){
 function escHandler(e){ if(e.key==="Escape") stopRun(); }
 function stopRun(){
   RUN.active=false;
-  clearTimeout(RUN.fbTimer); RUN.locked=false;
+  clearTimeout(RUN.fbTimer); clearTimeout(RUN.gapTimer); RUN.fb=null; RUN.locked=false;
   $("#stage").classList.remove("on");
   document.removeEventListener("keydown",escHandler);
   $("#stageSvg").removeEventListener("pointerdown",onClick);
@@ -973,59 +1101,63 @@ function loadSequence(){
   const cx=rect.width/2,cy=rect.height/2+14;
   RUN.pts=positions(cx,cy,radiusPx(s.cond.Apx),RUN.phase);
   RUN.o=orderOf(s.dir); RUN.W=s.cond.Wpx; RUN.mi=0; RUN.attempts=0; RUN.seqErr=0; RUN.from=null;
+  clearOutcome();                       // the layout changes here; nothing carries over
   drawStage(); updateHud();
 }
-function drawStage(hoverIdx,feedback){
+function drawStage(hoverIdx){
   const svgEl=$("#stageSvg"); svgEl.innerHTML="";
   if(is3D()) svgEl.appendChild(sphereDefs("st"));
   const activeIdx=RUN.o[RUN.mi];
   RUN.pts.forEach((p,i)=>{
     const act=i===activeIdx;
     let fill=is3D()?"url(#stsphIdle)":"#e3e9ed",stroke=is3D()?"#93a5b1":"#c2cdd5",sw=1;
-    if(feedback&&feedback.idx===i){
-      fill=is3D()?(feedback.ok?"url(#stsphOk)":"url(#stsphFail)"):(feedback.ok?"#2f7d5d":"#bf3b30");
-      stroke=feedback.ok?"#1c5b41":"#8c2a22";
-    }else if(act){
+    if(act){
       const on=is3D()?"url(#stsphAct)":"#f2c40c";
       if(C.fb.activeCue==="fill"){fill=on;stroke="#8f7300";}
       else if(C.fb.activeCue==="outline"){stroke="#f2c40c";sw=3;}
       else{fill=on;stroke="#12202b";sw=2.5;}
       if(C.fb.hover&&hoverIdx===i){fill=is3D()?"url(#stsphHover)":"#ffe066";}
     }
-    svgEl.appendChild(shapeNode(shapeName(),p.x,p.y,RUN.W,{fill,stroke,"stroke-width":sw,class:"flash"}));
+    svgEl.appendChild(shapeNode(shapeName(),p.x,p.y,RUN.W,{fill,stroke,"stroke-width":sw}));
   });
+  // Outcome marker for the selection just made. It is a separate overlay, so it never
+  // replaces the cue for the movement now underway and leaves nothing to restore.
+  if(RUN.fb){
+    const p=RUN.pts[RUN.fb.idx], col=RUN.fb.ok?"#2f7d5d":"#bf3b30";
+    svgEl.appendChild(shapeNode(shapeName(),p.x,p.y,RUN.W+8,{fill:"none",stroke:col,"stroke-width":3}));
+  }
 }
-// Colors the just-selected target green/red, holds it briefly, then hands control to `after`
-// (which shows the next target). Skipped instantly if the visual feedback for this outcome is off.
-function showFeedbackThen(idx,ok,after){
-  if(!(ok?C.fb.sucV:C.fb.failV)){ after(); return; }
-  RUN.locked=true;
-  drawStage(undefined,{idx,ok});
+// Shows the outcome on the target just selected for a fixed, documented duration.
+// It does not gate input and does not delay the next cue.
+function showOutcome(idx,ok){
   clearTimeout(RUN.fbTimer);
-  RUN.fbTimer=setTimeout(()=>{ RUN.locked=false; after(); },110);
+  if(!(ok?C.fb.sucV:C.fb.failV)||!fbMs()){ RUN.fb=null; return; }
+  RUN.fb={idx,ok};
+  RUN.fbTimer=setTimeout(()=>{ RUN.fb=null; if(RUN.active&&!RUN.locked) drawStage(); },fbMs());
 }
+function clearOutcome(){ clearTimeout(RUN.fbTimer); RUN.fb=null; }
 function hit(p,t){
   if(is3D()||C.shape==="circle")return Math.hypot(p.x-t.x,p.y-t.y)<=RUN.W/2;
   return Math.abs(p.x-t.x)<=RUN.W/2&&Math.abs(p.y-t.y)<=RUN.W/2;
 }
 function onMove(e){
-  if(!C.fb.hover)return;
+  if(!C.fb.hover||RUN.locked)return;
   const r=$("#stageSvg").getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};
   const idx=RUN.o[RUN.mi];
   drawStage(hit(p,RUN.pts[idx])?idx:-1);
 }
 function onClick(e){
-  if(RUN.locked)return;                 // ignore clicks while the outcome color is showing
+  const now=performance.now();
+  if(RUN.locked)return;                       // untimed gap between sequences only
+  if(now-RUN.lastClick<CLICK_GUARD_MS)return; // duplicate event, not a second selection
+  RUN.lastClick=now;
   const r=$("#stageSvg").getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};
-  const idx=RUN.o[RUN.mi],t=RUN.pts[idx],ok=hit(p,t),now=performance.now();
+  const idx=RUN.o[RUN.mi],t=RUN.pts[idx],ok=hit(p,t);
 
   if(RUN.mi===0){                       // start of the sequence: acquire target 1, not a recorded movement
-    if(!ok){ if(C.fb.failA)beep(200,.12,"square"); showFeedbackThen(idx,false,()=>drawStage()); return; }
-    if(C.fb.sucA)beep(880,.05);
-    showFeedbackThen(idx,true,()=>{
-      RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.mi=1; RUN.attempts=0;
-      drawStage(); updateHud();
-    });
+    if(ok){ if(C.fb.sucA)beep(880,.05); RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.mi=1; RUN.attempts=0; }
+    else if(C.fb.failA)beep(200,.12,"square");
+    showOutcome(idx,ok); drawStage(); updateHud();
     return;
   }
 
@@ -1053,12 +1185,19 @@ function onClick(e){
 
   if(ok){ if(C.fb.sucA)beep(880,.05); } else { if(C.fb.failA)beep(200,.12,"square"); }
 
-  showFeedbackThen(idx,ok,()=>{
-    if(!ok&&C.errMode==="repeat"){ drawStage(); return; }   // stay on the same target
+  const repeat=!ok&&C.errMode==="repeat";
+  if(!repeat){                          // the next movement starts here: cue and clock together
     RUN.from={x:p.x,y:p.y}; RUN.t0=now; RUN.attempts=0; RUN.mi++;
-    if(RUN.mi>C.n){ RUN.si++; loadSequence(); return; }
-    drawStage(); updateHud();
-  });
+  }
+  showOutcome(idx,ok);
+
+  if(!repeat&&RUN.mi>C.n){              // sequence finished: hold the last outcome over an untimed gap
+    RUN.locked=true; drawStage();
+    clearTimeout(RUN.gapTimer);
+    RUN.gapTimer=setTimeout(()=>{ RUN.locked=false; RUN.si++; loadSequence(); },Math.max(200,fbMs()));
+    return;
+  }
+  drawStage(); updateHud();
 }
 function updateHud(){
   $("#hudSeq").textContent=`sequence ${RUN.si+1}/${RUN.plan.length}`;
@@ -1128,7 +1267,7 @@ function renderResults(){
   const thin=R.filter(r=>r.n<15);
   $("#resFlags").innerHTML=thin.length
     ? `<div class="flag"><b>Thin conditions.</b> ${thin.map(t=>t.id).join(", ")} have fewer than 15 analysed movements — treat Wₑ, IDₑ and TP as provisional.</div>`
-    : `<div class="flag ok">All four measure families are here: movement time, error rate, throughput, and the MT–ID regression, with effective measures underneath. Report them together — throughput is a combined measure, not a replacement for its speed and accuracy components. Aggregate within participant and condition before comparing.</div>`;
+    : `<div class="flag ok">Movement time, error rate, throughput, the MT–ID regression and effective measures are all here — report them together. For a study, aggregate IDₑ and MT within participant and condition before computing TP.</div>`;
 
   drawFit(R); drawEndpoints(R);
 }
@@ -1147,7 +1286,7 @@ function drawFit(R){
   for(let i=0;i<=4;i++){
     const v=y0+(y1-y0)*i/4;
     g.appendChild(svg("line",{x1:m.l,y1:Y(v),x2:W-m.r,y2:Y(v),stroke:"#eef2f5"}));
-    const t=svg("text",{x:m.l-7,y:Y(v)+3.5,"text-anchor":"end","font-size":10,"font-family":"IBM Plex Mono, monospace",fill:"#5b6b78"});
+    const t=svg("text",{x:m.l-7,y:Y(v)+3.5,"text-anchor":"end","font-size":10,"font-family":FMONO,fill:"#5b6b78"});
     t.textContent=Math.round(v); g.appendChild(t);
   }
   const fit=regress(pts);
@@ -1155,13 +1294,13 @@ function drawFit(R){
     g.appendChild(svg("line",{x1:X(x0),y1:Y(fit.a+fit.b*x0),x2:X(x1),y2:Y(fit.a+fit.b*x1),stroke:"#1b6b8c","stroke-width":1.8}));
   }
   pts.forEach((p,i)=>g.appendChild(svg("circle",{cx:X(p.x),cy:Y(p.y),r:4.5,fill:"#d98216",stroke:"#fff","stroke-width":1.5})));
-  const xl=svg("text",{x:(W+m.l)/2,y:H-10,"text-anchor":"middle","font-size":11,"font-family":"IBM Plex Sans Condensed, sans-serif",fill:"#5b6b78"});
+  const xl=svg("text",{x:(W+m.l)/2,y:H-10,"text-anchor":"middle","font-size":11,"font-family":FSANS,fill:"#5b6b78"});
   xl.textContent="Index of difficulty (bits)"; g.appendChild(xl);
-  const yl=svg("text",{x:14,y:H/2,"text-anchor":"middle","font-size":11,transform:`rotate(-90 14 ${H/2})`,"font-family":"IBM Plex Sans Condensed, sans-serif",fill:"#5b6b78"});
+  const yl=svg("text",{x:14,y:H/2,"text-anchor":"middle","font-size":11,transform:`rotate(-90 14 ${H/2})`,"font-family":FSANS,fill:"#5b6b78"});
   yl.textContent="Movement time (ms)"; g.appendChild(yl);
   const wrap=$("#fitWrap"); wrap.innerHTML=""; wrap.appendChild(g);
   $("#fitNote").innerHTML=fit
-    ? `MT = ${fmt(fit.a,0)} + ${fmt(fit.b,1)}·ID ms, R² = ${fmt(fit.r2,3)}. Report the intercept and slope alongside throughput — TP alone hides a non-zero intercept.`
+    ? `MT = ${fmt(fit.a,0)} + ${fmt(fit.b,1)}·ID ms, R² = ${fmt(fit.r2,3)}. With a non-zero intercept, throughput depends on the ID range sampled — report slope and intercept alongside it.`
     : "At least two conditions are needed for a regression.";
 }
 function drawEndpoints(R){
@@ -1182,11 +1321,11 @@ function drawEndpoints(R){
     rows.filter(t=>t.condition===id).forEach(t=>{
       g.appendChild(svg("circle",{cx:X(t.dx_px),cy:yc+(Math.random()-.5)*9,r:2.6,fill:t.hit?"#1b6b8c":"#bf3b30",opacity:.65}));
     });
-    const lab=svg("text",{x:m.l-7,y:yc+3.5,"text-anchor":"end","font-size":10,"font-family":"IBM Plex Mono, monospace",fill:"#5b6b78"});
+    const lab=svg("text",{x:m.l-7,y:yc+3.5,"text-anchor":"end","font-size":10,"font-family":FMONO,fill:"#5b6b78"});
     lab.textContent=id; g.appendChild(lab);
   });
   g.appendChild(svg("line",{x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:"#ccd6de"}));
-  const xl=svg("text",{x:(W+m.l)/2,y:H-10,"text-anchor":"middle","font-size":11,"font-family":"IBM Plex Sans Condensed, sans-serif",fill:"#5b6b78"});
+  const xl=svg("text",{x:(W+m.l)/2,y:H-10,"text-anchor":"middle","font-size":11,"font-family":FSANS,fill:"#5b6b78"});
   xl.textContent=`undershoot ← endpoint deviation along the movement axis (px) → overshoot`;
   g.appendChild(xl);
   const wrap=$("#epWrap"); wrap.innerHTML=""; wrap.appendChild(g);
@@ -1198,8 +1337,9 @@ function drawEndpoints(R){
 function spec(){
   const s=stepOf(),conds=conditions(),b=budget();
   return{
-    tool:"MDTT Testbed v1.0",
+    tool:"MDTT Testbed v1.1",
     generated:new Date().toISOString(),
+    reference_procedure:"ISO/TS 9241-411 Annex B.6.2.2 (multi-directional tapping test)",
     study:{title:C.meta.title,session:C.meta.who,goal:C.meta.goal},
     config_id:fingerprint(),
     apparatus:{...C.apparatus,
@@ -1210,6 +1350,7 @@ function spec(){
       ? {dimensionality:"3D",target:"sphere",layout_plane:"fronto-parallel",
          depth_mm:C.depthMm,
          angular:{note:"visual angles subtended at the eye at the stated depth",
+           formula:"theta = 2 * arctan(W / (2 * z)), z = depth_mm",
            W_deg:conds.map(c=>+c.Wdeg.toFixed(3)),
            A_realized_deg:conds.map(c=>+c.Adeg.toFixed(3)),
            ID_angular_bits:conds.map(c=>+c.IDang.toFixed(3))},
@@ -1220,6 +1361,7 @@ function spec(){
              windowPx:{w:window.innerWidth,h:window.innerHeight}},
     reporting_unit:C.unit,
     difficulty:{formulation:"ID = log2(A/W + 1) (Shannon)",
+      model:"MT = a + b * ID",
       conditions:conds.map(c=>({id:c.id,A:c.A,W:c.W,unit:C.unit,
         A_px:+c.Apx.toFixed(2),W_px:+c.Wpx.toFixed(2),
         A_realized_px:+c.realPx.toFixed(2),A_realized_mm:+px2mm(c.realPx).toFixed(2),
@@ -1240,11 +1382,15 @@ function spec(){
       sequences_total:b.seqs,movements_presented:b.moves,movements_analysed:b.analysed,
       error_handling:C.errMode==="advance"?"advance to next target, error logged":"repeat target until acquired"},
     feedback:{active_target_cue:C.fb.activeCue,hover_highlight:C.fb.hover,
-      success:{visual:C.fb.sucV,audio:C.fb.sucA},failure:{visual:C.fb.failV,audio:C.fb.failA},haptic:false},
+      success:{visual:C.fb.sucV,audio:C.fb.sucA},failure:{visual:C.fb.failV,audio:C.fb.failA},haptic:false,
+      outcome_duration_ms:fbMs(),
+      timing:"the next target is cued at the moment of selection; the outcome marker is drawn on the target just selected and is not part of the following movement"},
     analysis:{MT:"time from the preceding terminal selection to the first click on the current movement",
       endpoint:"first click of each movement, hits and misses alike",
-      We:"4.133 * SD of dx (endpoint projected on the movement axis)",
-      Ae:"mean(a + dx)",IDe:"log2(Ae/We + 1)",TP:"IDe / MT"}
+      We:"4.133 * SD of dx (endpoint projected on the movement axis); ~96% of the endpoint distribution",
+      Ae:"mean(a + dx)",IDe:"log2(Ae/We + 1)",TP:"IDe / MT",
+      aggregation:"pilot values pool movements within a condition; aggregate IDe and MT within participant and condition for a study",
+      reported_together:["movement_time","error_rate","throughput","MT_ID_regression","effective_measures"]}
   };
 }
 function download(name,text,mime){
@@ -1273,6 +1419,7 @@ function methodsHTML(){
   const fal=[C.fb.failV&&"visual",C.fb.failA&&"auditory"].filter(Boolean).join(" and ");
   fbBits.push(suc?`successful selections produced ${suc} feedback`:"successful selections produced no additional feedback");
   fbBits.push(fal?`unsuccessful selections produced ${fal} feedback`:"unsuccessful selections produced no additional feedback");
+  if((C.fb.sucV||C.fb.failV)&&fbMs())fbBits.push(`visual outcome feedback was a coloured outline on the target just selected, shown for ${fbMs()} ms, which did not delay the cue for the next target`);
 
   return `
   <p style="margin:0 0 10px">Participants performed a multi-directional tapping task following ISO/TS 9241-411 Annex B.6.2.2, implemented with the configurable MDTT testbed.
@@ -1280,45 +1427,55 @@ function methodsHTML(){
   Selection advanced by ${s} targets per movement (index<sub>k+1</sub> = (index<sub>k</sub> + ${s}) mod ${C.n})${C.adv.mirror?", with clockwise and counter-clockwise sequences mirrored":""}, so that each movement crossed the layout at ${fmt(chordFactor(),3)} × the circle diameter${C.compensate?"; the circle was scaled so that the realized movement amplitude equalled the nominal A":""}.</p>
   <p style="margin:0 0 10px">Difficulty was manipulated with ${C.amps.length} amplitude${C.amps.length>1?"s":""} × ${C.wids.length} width${C.wids.length>1?"s":""}, giving ${b.conds} conditions spanning ID = ${idr} bits under the Shannon formulation ID = log₂(A/W + 1): ${list}. Amplitudes and widths are reported in ${C.unit}; the display subtended ${fmt(C.display.scrMm,0)} mm across ${C.display.scrPx} px at a viewing distance of ${fmt(C.display.viewMm,0)} mm (${fmt(pxPerMm(),2)} px/mm), so the widths correspond to ${conds.map(c=>fmt(c.Wdeg,2)).filter((v,i,a)=>a.indexOf(v)===i).join(", ")}° of visual angle.${is3D()?` At the stated depth the realized amplitudes subtended ${conds.map(c=>fmt(c.Adeg,2)).filter((v,i,a)=>a.indexOf(v)===i).join(", ")}°, giving angular indices of difficulty of ${conds.map(c=>fmt(c.IDang,2)).join(", ")} bits; depth was held constant across conditions.`:""}</p>
   <p style="margin:0 0 10px">Each sequence presented ${C.n} movements${C.practice?`, of which the first ${C.practice===1?"":C.practice+" "}${C.practice===1?"movement was":"movements were"} treated as practice and excluded`:""}, leaving ${Math.max(0,C.n-C.practice)} analysed movements per sequence. Conditions were presented in ${C.order==="random"?"randomised":C.order==="ascending"?"ascending-ID":"fixed"} order and repeated ${C.reps} time${C.reps>1?"s":""}, yielding ${b.seqs} sequences and ${b.analysed} analysed movements per participant (${b.perCond} per condition). After an unsuccessful selection the task ${C.errMode==="advance"?"advanced to the next target and the error was logged":"repeated the same target until it was acquired"}.</p>
-  <p style="margin:0">Regarding feedback, ${fbBits.join(", ")}. Feedback states were held constant across conditions. Movement time was measured from the terminal selection of the preceding movement to the first selection of the current one; the first selection of every movement, whether successful or not, entered the endpoint distribution. Effective width was computed as Wₑ = 4.133·SD<sub>x</sub>, effective amplitude as the mean projected movement distance, and throughput as IDₑ/MT.</p>`;
+  <p style="margin:0">Regarding feedback, ${fbBits.join(", ")}. Feedback states were held constant across conditions. Movement time was measured from the terminal selection of the preceding movement to the first selection of the current one; the first selection of every movement, whether successful or not, entered the endpoint distribution. Effective width was computed as Wₑ = 4.133·SD<sub>x</sub>, effective amplitude as the mean projected movement distance, and throughput as IDₑ/MT, aggregated within participant and condition. Movement time, error rate, throughput and the MT–ID regression are reported together.</p>`;
 }
 let CHECKITEMS=[];
 function renderChecklist(){
   const s=stepOf(),b=budget(),conds=conditions();
   const ok=v=>v&&String(v).trim().length?`<span style="color:#2f7d5d">✓</span>`:`<span style="color:#bf3b30">needs input</span>`;
+  const dup=dupIDs();
   const items=[
-    ["1","Evaluation goal &amp; priority",C.meta.goal?`stated`:`<span style="color:#bf3b30">not stated</span>`],
-    ["2","Reference procedure &amp; departures","ISO/TS 9241-411 B.6.2.2"+(C.compensate||C.adv.mirror||C.adv.phaseMode!=="fixed"?" + documented departures":"")],
-    ["3","Input / output devices",`${C.apparatus.input} → ${C.apparatus.output} ${ok(C.apparatus.inputModel)}`],
-    ["4","Control-to-display mapping",ok(C.apparatus.mapping)],
-    ["5","Selection trigger &amp; hit definition",ok(C.apparatus.trigger)],
-    ["6","ID formulation","log₂(A/W + 1)"],
-    ["7","A, W and ID per condition",`${b.conds} conditions exported`],
+    ["1","Evaluation goal and priority",C.meta.goal?`stated`:`<span style="color:#bf3b30">not stated</span>`],
+    ["2","Reference procedure and departures","ISO/TS 9241-411 B.6.2.2"+(C.compensate||C.adv.mirror||C.adv.phaseMode!=="fixed"?" + documented departures":"")],
+    ["3","Devices, model and display characteristics",`${C.apparatus.input} → ${C.apparatus.output} ${ok(C.apparatus.inputModel)} · ${C.display.scrPx} px / ${fmt(C.display.scrMm,0)} mm`],
+    ["4","Input-to-pointer mapping",ok(C.apparatus.mapping)],
+    ["5","Selection trigger and hit definition",ok(C.apparatus.trigger)],
+    ["6","ID formulation, exact equation","ID = log₂(A/W + 1); MT = a + b·ID"],
+    ["7","A, W and ID per condition",`${b.conds} conditions`+(dup.length?` — ${dup.length} shared-ID pair${dup.length>1?"s":""}`:"")],
     ["8","Units for A and W",`${C.unit} + px, mm, deg`],
-    ["9","Dimensionality, shape, dimensions",is3D()?`3D, sphere`:`2D, ${C.shape}`+(C.shape==="square"?" — define W per direction":"")],
-    ["10","Depth / visual angle (XR)",is3D()
+    ["9","Dimensionality, shape, W convention",is3D()?`3D sphere — W direction-invariant`:`2D ${C.shape}`+(C.shape==="square"?" — define W per direction":" — W direction-invariant")],
+    ["10","Depth and visual angle (XR)",is3D()
       ? `depth ${fmt(C.depthMm,0)} mm; W ${fmt(Math.min(...conds.map(c=>c.Wdeg)),2)}–${fmt(Math.max(...conds.map(c=>c.Wdeg)),2)}°, A′ ${fmt(Math.min(...conds.map(c=>c.Adeg)),2)}–${fmt(Math.max(...conds.map(c=>c.Adeg)),2)}°`
       : `planar task; ${fmt(C.display.viewMm,0)} mm viewing distance`],
-    ["11","Visible target count &amp; layout",`${C.n} on a circle, phase ${C.adv.phaseMode}`],
-    ["12","Start target &amp; sequence rule",`target 1 (12 o'clock), step ${s}`],
-    ["13","Attempted vs. analysed movements",`${b.moves} presented, ${b.analysed} analysed`],
-    ["14","Repetitions and blocks",`${C.reps} × ${b.conds} × ${dirList().length} dir × ${phaseList().length} phase`],
-    ["15","Realized amplitudes verified",`chord = ${fmt(chordFactor(),3)} × diameter`],
-    ["16","Sequence direction &amp; phase",`${C.adv.mirror?"mirrored":"single direction"}, phase ${C.adv.phaseMode}`],
+    ["11","Target count and layout",`${C.n} equally spaced on a circle, phase ${C.adv.phaseMode}`],
+    ["12","Start target and sequence rule",`target 1 (12 o'clock), index(k+1) = (index(k) + ${s}) mod ${C.n}`],
+    ["13","Presented vs. analysed movements",`${b.moves} presented, ${b.analysed} analysed (first ${C.practice}/sequence dropped)`],
+    ["14","Repetitions, sequences, blocks",`${C.reps} × ${b.conds} cond × ${dirList().length} dir × ${phaseList().length} phase = ${b.seqs} sequences`],
+    ["15","Realized amplitudes verified",`chord = ${fmt(chordFactor(),3)} × diameter${C.compensate?", compensated":""}`],
+    ["16","Sequence direction and phase",`${C.adv.mirror?"mirrored cw/ccw":"cw only"}, phase ${C.adv.phaseMode}`],
     ["17","Active-target cue",C.fb.activeCue],
-    ["18","Hover / success / failure feedback",`hover ${C.fb.hover?"on":"off"}, success ${[C.fb.sucV&&"vis",C.fb.sucA&&"aud"].filter(Boolean).join("+")||"none"}, failure ${[C.fb.failV&&"vis",C.fb.failA&&"aud"].filter(Boolean).join("+")||"none"}`],
-    ["19","Error definition &amp; consequence",C.errMode==="advance"?"first click outside the target; task advances":"first click outside the target; target repeats"],
-    ["20","Feedback held constant",`yes — feedback is not manipulated in this configuration`],
-    ["21","MT with an error or accuracy measure",`MT and error rate reported per condition`],
-    ["22","Throughput alongside MT and accuracy",`TP = IDₑ/MT, reported next to MT and error rate`],
-    ["23","Regression / model fit",`MT regressed on ID; intercept, slope and R² reported`],
-    ["24","Effective measures stated",`Aₑ, Wₑ = 4.133·SDₓ, IDₑ from movement endpoints`],
+    ["18","Hover, success and failure feedback",`hover ${C.fb.hover?"on":"off"}, success ${[C.fb.sucV&&"vis",C.fb.sucA&&"aud"].filter(Boolean).join("+")||"none"}, failure ${[C.fb.failV&&"vis",C.fb.failA&&"aud"].filter(Boolean).join("+")||"none"}, ${fbMs()} ms`],
+    ["19","Error definition and consequence",C.errMode==="advance"?"first selection outside the target; task advances":"first selection outside the target; target repeats"],
+    ["20","Feedback held constant",`yes — feedback is not manipulated here`],
+    ["21","MT with an error or accuracy measure",`MT and error rate per condition`],
+    ["22","Throughput alongside its components",`TP = IDₑ/MT, next to MT and error rate`],
+    ["23","Regression / model fit",`MT on ID; intercept, slope, R²`],
+    ["24","Effective measures stated",`Aₑ, Wₑ = 4.133·SDₓ, IDₑ`],
     ["25","Reconstructable configuration",`JSON spec with realized geometry and sequence rule`],
-    ["26","Implementation, trial-level and analysis data",TR.length?`trial CSV (${TR.length} rows) + summary CSV`:`<span style="color:#bf3b30">no pilot data yet</span>`]
+    ["26","Implementation, data, analysis materials",TR.length?`trial CSV (${TR.length} rows) + summary CSV`:`<span style="color:#bf3b30">no pilot data yet</span>`]
   ];
   CHECKITEMS=items;
-  $("#checkTable").innerHTML=`<thead><tr><th style="width:34px">#</th><th>Checklist item</th><th style="text-align:left">Value in this configuration</th></tr></thead><tbody>`+
-    items.map(i=>`<tr><td class="num">${i[0]}</td><td>${i[1]}</td><td style="text-align:left" class="num">${i[2]}</td></tr>`).join("")+"</tbody>";
+  const groups=[["Goal & reference procedure",1],["Apparatus & mapping",3],["Difficulty, geometry & units",6],
+                ["Count, sequence & analysed movements",11],["Feedback & error handling",17],["Measures & analysis",21]];
+  let body="";
+  items.forEach(i=>{
+    const g=groups.find(g=>String(g[1])===i[0]);
+    if(g) body+=`<tr><td class="grp" colspan="3">${g[0]}</td></tr>`;
+    body+=`<tr><td class="num">${i[0]}</td><td>${i[1]}</td><td style="text-align:left" class="num">${i[2]}</td></tr>`;
+  });
+  $("#checkTable").innerHTML=`<thead><tr><th style="width:34px">#</th><th>Checklist item</th><th style="text-align:left">Value in this configuration</th></tr></thead><tbody>${body}</tbody>`;
+  const open=items.filter(i=>/needs input|not stated|no pilot data/.test(i[2])).length;
+  $("#checkCount").innerHTML=open?`${items.length-open} / ${items.length} filled`:`${items.length} / ${items.length} filled`;
 }
 
 
@@ -1340,8 +1497,10 @@ function outstanding(){
   });
   if(!TR.length) out.push("No pilot data yet. Run at least one full pass so the reported task is the task you actually piloted.");
   if(b.perCond<15) out.push(`Only ${b.perCond} analysed movements per condition — Wₑ and throughput will be unstable at this budget.`);
-  if(!is3D()&&C.unit==="px") out.push("Amplitudes and widths are specified in pixels. The sheet converts them to mm and degrees; keep those conversions in the paper, since pixels alone do not fix physical extent.");
-  if(is3D()) out.push("The in-browser run is a perspective proxy, not an HMD. Report the XR implementation you actually used — headset, tracking, selection ray or hand point — alongside this configuration.");
+  if(conditions().length<2) out.push("Only one A × W condition — ISO asks for a range of difficulties, and a single condition supports no MT–ID regression.");
+  if(dupIDs().length) out.push(`Different A–W pairs share an ID (${dupIDs().join("; ")}) — report A and W per condition, not ID alone.`);
+  if(!is3D()&&C.unit==="px") out.push("Amplitudes and widths are in pixels — keep the mm and degree conversions from this sheet in the paper.");
+  if(is3D()) out.push("The in-browser run is a perspective proxy, not an HMD — report the XR implementation you actually used alongside this configuration.");
   if(C.shape==="square"&&!is3D()) out.push("Square targets: state explicitly how W is determined for approaches that are not axis-aligned.");
   return out;
 }
@@ -1387,14 +1546,16 @@ function reportRows(){
       ["Active-target cue",C.fb.activeCue],
       ["Hover / contact highlight",C.fb.hover?"on":"off"],
       ["Success feedback",fbSuc],["Failure feedback",fbFail],["Haptic feedback","none"],
+      ["Outcome duration",fbMs()?`${fbMs()} ms outline on the target just selected; the next target is cued at the moment of selection`:"no visual outcome marker"],
       ["Held constant","yes — feedback is not an independent variable in this configuration"]
     ],
     analysis:[
+      ["Formulation","Shannon ID = log₂(A/W + 1); MT modelled as MT = a + b·ID"],
       ["Movement time","from the terminal selection of the preceding movement to the first selection of the current one"],
       ["Endpoint","first selection of every movement, hits and misses alike"],
-      ["Effective width","Wₑ = 4.133 · SD of endpoint deviation along the movement axis"],
+      ["Effective width","Wₑ = 4.133 · SD of endpoint deviation along the movement axis (≈96% of endpoints)"],
       ["Effective amplitude","Aₑ = mean(a + dx)"],
-      ["Throughput","TP = IDₑ / MT, computed per condition"],
+      ["Throughput","TP = IDₑ / MT per condition; aggregate within participant and condition for a full study"],
       ["Model fit","MT regressed on ID; intercept, slope and R² reported alongside throughput"],
       ["Reported measure set","movement time, error rate, throughput, MT–ID regression, and effective measures — reported together, not interchangeably"]
     ]
@@ -1403,7 +1564,7 @@ function reportRows(){
 function renderReport(){
   const D=reportRows(), fp=fingerprint(), R=analyse();
   const dl=rows=>`<dl class="kv">`+rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join("")+`</dl>`;
-  const sec=(n,title,r,body)=>`<section><h4>${n} · ${title} ${r?`<span class="r">${r}</span>`:""}</h4>${body}</section>`;
+  const sec=(n,title,r,body)=>`<section><h4>${n} · ${title} ${r?`<span class="r">${r}</span>`:""}</h4>${r&&REC[r]?`<p class="rec">${REC[r]}</p>`:""}${body}</section>`;
   const mmCols=C.unit!=="mm";
   let ct=`<div class="tablewrap"><table><thead><tr><th>Condition</th><th>A (${U()})</th><th>A′ realized (${U()})</th><th>W (${U()})</th>`+
     (mmCols?`<th>A′ (mm)</th><th>W (mm)</th>`:``)+
@@ -1414,7 +1575,7 @@ function renderReport(){
       `<td class="num">${fmt(c.Adeg,2)}</td><td class="num">${fmt(c.Wdeg,2)}</td>
       <td class="num"><b>${fmt(c.ID,2)}</b></td>${is3D()?`<td class="num">${fmt(c.IDang,2)}</td>`:""}</tr>`;
   });
-  ct+="</tbody></table></div>";
+  ct+=`</tbody></table></div><p class="hint" style="margin:8px 0 0">Shannon ID = log₂(A′/W + 1) from the realized amplitude A′; MT = a + b·ID. A′ and W are given in the reporting unit and in physical and angular units.</p>`;
 
   let pilot=`<p class="hint" style="margin:8px 0 0">No pilot data collected in this session.</p>`;
   if(R.length){
@@ -1453,8 +1614,8 @@ function reportMarkdown(){
     `**Config ID:** ${fp}  \n**Generated:** ${new Date().toISOString().slice(0,10)}`+
     (CONFIRM&&CONFIRM.fp===fp?`  \n**Confirmed:** ${CONFIRM.at}`:"")+`\n\n`+
     `## 1. Study and reference procedure\n\n${head}${kv(D.study)}\n\n`+
-    `## 2. Apparatus and mapping (R1)\n\n${head}${kv(D.apparatus)}\n\n`+
-    `## 3. Difficulty conditions (R2)\n\n`+
+    `## 2. Apparatus and mapping (R1)\n\n_${REC.R1}_\n\n${head}${kv(D.apparatus)}\n\n`+
+    `## 3. Difficulty conditions (R2)\n\n_${REC.R2}_\n\n`+
     (()=>{
       const mmCols=C.unit!=="mm";
       const cols=["Condition",`A (${U()})`,`A' realized (${U()})`,`W (${U()})`]
@@ -1467,10 +1628,10 @@ function reportMarkdown(){
           return `| ${cells.join(" | ")} |`;
         }).join("\n")+`\n\n`;
     })()+
-    `## 4. Target geometry (R3)\n\n${head}${kv(D.geometry)}\n\n`+
-    `## 5. Procedure, trials and error handling (R4)\n\n${head}${kv(D.procedure)}\n\n`+
-    `## 6. Feedback (R5)\n\n${head}${kv(D.feedback)}\n\n`+
-    `## 7. Performance measures and Fitts' law analysis (R6)\n\n${head}${kv(D.analysis)}\n\n`;
+    `## 4. Target geometry (R3)\n\n_${REC.R3}_\n\n${head}${kv(D.geometry)}\n\n`+
+    `## 5. Procedure, trials and error handling (R4)\n\n_${REC.R4}_\n\n${head}${kv(D.procedure)}\n\n`+
+    `## 6. Feedback (R5)\n\n_${REC.R5}_\n\n${head}${kv(D.feedback)}\n\n`+
+    `## 7. Performance measures and Fitts' law analysis (R6)\n\n_${REC.R6}_\n\n${head}${kv(D.analysis)}\n\n`;
   if(R.length){
     md+=`### Pilot results (this session)\n\n| Condition | n | ID | MT (ms) | Err (%) | We (${U()}) | IDe | TP (bps) |\n|---|---|---|---|---|---|---|---|\n`+
       R.map(r=>`| ${r.id} | ${r.n} | ${fmt(r.ID,2)} | ${fmt(r.MT,0)} | ${fmt(100*r.err,1)} | ${fmt(fromPx(r.We_px),2)} | ${fmt(r.IDe,2)} | ${fmt(r.TP,2)} |`).join("\n")+`\n\n`;
@@ -1489,6 +1650,7 @@ function syncDimUI(){
   $("#depthField").classList.toggle("hidden",!three);
   $("#view3dBar").classList.toggle("hidden",!three);
   $("#view3dBar").style.display=three?"flex":"none";
+  syncDepthUI();
   $$("#dimSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.d===C.dim)));
   $$("#unitSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.u===C.unit)));
   const pxBtn=$('#unitSeg button[data-u="px"]');
@@ -1509,7 +1671,7 @@ function applySpecToUI(){
   $("#order").value=C.order; $("#errMode").value=C.errMode;
   $("#activeCue").value=C.fb.activeCue; $("#fbHover").checked=C.fb.hover;
   $("#fbSucV").checked=C.fb.sucV; $("#fbSucA").checked=C.fb.sucA;
-  $("#fbFailV").checked=C.fb.failV; $("#fbFailA").checked=C.fb.failA;
+  $("#fbFailV").checked=C.fb.failV; $("#fbFailA").checked=C.fb.failA; $("#fbDur").value=C.fb.durMs;
   $("#advMirror").checked=C.adv.mirror; $("#phaseMode").value=C.adv.phaseMode;
   $("#phaseDeg").value=C.adv.phaseDeg; $("#phaseK").value=C.adv.phaseK;
   $("#phaseK").disabled=C.adv.phaseMode!=="counter";
@@ -1547,7 +1709,7 @@ $("#loadSpec").addEventListener("change",e=>{
       const cds=s.difficulty?.conditions||[];
       if(cds.length){C.amps=[...new Set(cds.map(c=>c.A))];C.wids=[...new Set(cds.map(c=>c.W))];}
       C.dim=s.task_space?.dimensionality==="3D"?"3d":"2d";
-      C.depthMm=s.task_space?.depth_mm||1000;
+      C.depthMm=s.task_space?.depth_mm||1000; V3.home=C.depthMm;
       C.n=s.geometry?.targets||13;
       C.shape=(s.geometry?.shape==="sphere")?"circle":(s.geometry?.shape||"circle");
       C.step=s.geometry?.step||autoStep(C.n); C.stepMode="manual";
@@ -1561,7 +1723,8 @@ $("#loadSpec").addEventListener("change",e=>{
       C.errMode=(s.procedure?.error_handling||"").startsWith("repeat")?"repeat":"advance";
       const fb=s.feedback||{};
       C.fb={activeCue:fb.active_target_cue||"fill",hover:!!fb.hover_highlight,
-            sucV:!!fb.success?.visual,sucA:!!fb.success?.audio,failV:!!fb.failure?.visual,failA:!!fb.failure?.audio};
+            sucV:!!fb.success?.visual,sucA:!!fb.success?.audio,failV:!!fb.failure?.visual,failA:!!fb.failure?.audio,
+            durMs:fb.outcome_duration_ms??70};
       applySpecToUI(); renderAll();
     }catch(err){alert("Could not read that file as an MDTT config: "+err.message);}
   };
@@ -1588,6 +1751,13 @@ pv.addEventListener("pointermove",e=>{
 });
 ["pointerup","pointercancel","pointerleave"].forEach(ev=>pv.addEventListener(ev,()=>{V3.drag=null;}));
 $("#frontViewBtn").addEventListener("click",()=>{V3.yaw=0;V3.pitch=0;render3D();updateOrbit();});
+$("#homeDepthBtn").addEventListener("click",()=>setDepth(V3.home));
+// scroll over the preview to move the target plane in depth
+pv.addEventListener("wheel",e=>{
+  if(!is3D())return;
+  e.preventDefault();
+  setDepth(C.depthMm*(e.deltaY>0?1.06:1/1.06));
+},{passive:false});
 
 // report
 $("#confirmBtn").addEventListener("click",()=>{
@@ -1606,6 +1776,5 @@ C.display.scrPx=window.screen.width||1920;
 applySpecToUI();
 renderAll();
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"a91e086813be4c85866426ceaf974bfc","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
